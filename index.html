@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { overflow-x: hidden; background-color: #F4F3EF; }
+        /* Ajuste para alinhar perfeitamente o título nativo do formulário na direita */
+        .formulario-topo-ajuste {
+            background-color: #FFFFFF;
+            border-top-left-radius: 14px;
+            border-top-right-radius: 14px;
+            border: 1px solid #E6E4DF;
+            border-bottom: none;
+            padding: 20px 25px 5px 25px;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.01);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 🏢 1. BARRA LATERAL GRAFITE -->
+    <div class="sidebar">
+        <h3>🏢 Ponto de Apoio</h3>
+        <div class="sub">SUPORTE DE TI</div>
+        <div class="secao">ESPAÇO DE TRABALHO</div>
+        <div class="item">🗂️ Chamados</div>
+    </div>
+
+    <!-- 🖥️ 2. CONTEÚDO PRINCIPAL CENTRAL -->
+    <div class="conteudo-principal">
+        <p class="topo-sub">CENTRAL DE SUPORTE · VISÃO GERAL</p>
+        <h1 class="topo-titulo">Controle de chamados</h1>
+
+        <!-- 📊 LINHA DE MÉTRICAS DINÂMICAS -->
+        <div class="linha-metricas">
+            <div class="metric-box">
+                <p>Abertos</p>
+                <h2>{{ QTD_ABERTOS }}</h2>
+            </div>
+            <div class="metric-box">
+                <p>Em andamento</p>
+                <h2>{{ QTD_ANDAMENTO }}</h2>
+            </div>
+            <div class="metric-box">
+                <p>Resolvidos</p>
+                <h2>{{ QTD_RESOLVIDOS }}</h2>
+            </div>
+        </div>
+
+        <!-- GRID PRINCIPAL -->
+        <div class="painel-grid">
+            
+            <!-- COLUNA DA ESQUERDA: LISTA DE CARDS (Injetada dinamicamente pelo Python) -->
+            <div class="col-esquerda">
+                <h4 class="titulo-secao">Chamados registrados</h4>
+                <!-- O Python vai renderizar os blocos aqui -->
+                {{ LISTA_CHAMADOS_HTML }}
+            </div>
+
+            <!-- COLUNA DA DIREITA: TITULO DO FORMULÁRIO -->
+            <div class="col-direita">
+                <div class="formulario-topo-ajuste">
+                    <h4>📥 Abrir chamado</h4>
+                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #7A7975;">Conte o que aconteceu. O status inicial será Aberto.</p>
+                </div>
+                <!-- O Python vai injetar o formulário interativo logo abaixo deste bloco -->
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

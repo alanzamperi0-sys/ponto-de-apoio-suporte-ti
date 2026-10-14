@@ -1,0 +1,499 @@
+import streamlit as st
+from pathlib import Path
+from html import escape
+from datetime import datetime
+import sqlite3
+
+st.set_page_config(page_title="Ponto de Apoio | Suporte de TI", page_icon="🛠️", layout="wide")
+
+# Banco SQLite local: os chamados permanecem salvos entre execuções.
+DB_PATH = Path(__file__).with_name("ponto_apoio.db")
+
+def conectar_banco():
+    conexao = sqlite3.connect(DB_PATH)
+    conexao.row_factory = sqlite3.Row
+    return conexao
+
+def inicializar_banco():
+    """Cria a tabela e insere exemplos somente se o banco estiver vazio."""
+    with conectar_banco() as conexao:
+        conexao.execute(
+            """
+            CREATE TABLE IF NOT EXISTS chamados (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                titulo TEXT NOT NULL,
+                solicitante TEXT NOT NULL,
+                categoria TEXT NOT NULL,
+                descricao TEXT NOT NULL,
+                status TEXT NOT NULL DEFAULT 'Aberto',
+                prioridade TEXT NOT NULL DEFAULT 'Média',
+                data TEXT NOT NULL
+            )
+            """
+        )
+        quantidade = conexao.execute("SELECT COUNT(*) FROM chamados").fetchone()[0]
+        if quantidade == 0:
+            exemplos = [
+                ("Computador não liga", "Lucas", "Computador",
+                 "O equipamento não está ligando, apenas o led acende.",
+                 "Aberto", "Baixa", "10/10/2026 14:32"),
+                ("Impressora não reconhece", "Joao", "Impressora",
+                 "A impressora não está sendo reconhecida pelo sistema.",
+                 "Em andamento", "Média", "13/10/2026 13:30"),
+            ]
+            conexao.executemany(
+                """INSERT INTO chamados
+                   (titulo, solicitante, categoria, descricao, status, prioridade, data)
+                   VALUES (?, ?, ?, ?, ?, ?, ?)""", exemplos
+            )
+
+def listar_chamados():
+    with conectar_banco() as conexao:
+        linhas = conexao.execute("SELECT * FROM chamados ORDER BY id").fetchall()
+        return [dict(linha) for linha in linhas]
+
+def criar_chamado(titulo, solicitante, categoria, descricao, prioridade):
+    data_abertura = datetime.now().strftime("%d/%m/%Y %H:%M")
+    with conectar_banco() as conexao:
+        cursor = conexao.execute(
+            """INSERT INTO chamados
+               (titulo, solicitante, categoria, descricao, status, prioridade, data)
+               VALUES (?, ?, ?, ?, 'Aberto', ?, ?)""",
+            (titulo, solicitante, categoria, descricao, prioridade, data_abertura),
+        )
+        return cursor.lastrowid
+
+def atualizar_status(chamado_id, novo_status):
+    with conectar_banco() as conexao:
+        conexao.execute(
+            "UPDATE chamados SET status = ? WHERE id = ?",
+            (novo_status, chamado_id),
+        )
+
+inicializar_banco()
+st.session_state.lista_chamados = listar_chamados()
+st.session_state.proximo_id = max((c["id"] for c in st.session_state.lista_chamados), default=0) + 1
+
+if "chamado_detalhe_id" not in st.session_state:
+    st.session_state.chamado_detalhe_id = None
+if "modal_minimized" not in st.session_state:
+    st.session_state.modal_minimized = False
+if "modal_maximized" not in st.session_state:
+    st.session_state.modal_maximized = False
+
+STATUS = ["Aberto", "Em andamento", "Resolvido"]
+CATEGORIAS = ["Acesso", "Computador", "Impressora", "Rede/Internet", "Sistema", "Outro"]
+PRIORIDADES = ["Baixa", "Média", "Alta"]
+STATUS_CLASSES = {"Aberto": "aberto", "Em andamento": "andamento", "Resolvido": "resolvido"}
+PRIORIDADE_CLASSES = {"Baixa": "baixa", "Média": "media", "Alta": "alta"}
+
+def contar(status):
+    return sum(c["status"] == status for c in st.session_state.lista_chamados)
+
+def salvar_status(chamado_id, novo_status):
+    atualizar_status(chamado_id, novo_status)
+    st.session_state.lista_chamados = listar_chamados()
+
+
+css_path = Path(__file__).with_name("style.css")
+if css_path.exists():
+    st.markdown(f"<style>{css_path.read_text(encoding='utf-8')}</style>", unsafe_allow_html=True)
+
+with st.sidebar:
+    st.markdown(
+        """
+        <div class="sidebar-brand">
+          <div class="sidebar-icon">🎧</div>
+          <div><div class="sidebar-title">Ponto de Apoio</div>
+          <div class="sidebar-subtitle">SUPORTE DE TI</div></div>
+        </div>
+        <div class="sidebar-section">ESPAÇO DE TRABALHO</div>
+        <div class="sidebar-nav-active">☷ &nbsp; Chamados</div>
+        <div class="sidebar-note"><strong>☑ &nbsp; Um passo de cada vez</strong><br><br>
+        Registre, acompanhe e resolva solicitações de suporte em um só lugar.</div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+st.markdown(
+    """
+    <div class="topo">
+      <div class="topo-marca">
+        <div class="topo-icone">🛠️</div>
+        <div><div class="marca">Ponto de Apoio</div><div class="submarca">SUPORTE DE TI</div></div>
+      </div>
+      <div class="topo-legenda">♟ &nbsp; Central de suporte</div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+st.title("Painel de chamados")
+st.caption("Registre solicitações e acompanhe cada atendimento.")
+
+metricas = [
+    ("total", '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3h8v3h3a1.5 1.5 0 0 1 1.5 1.5v12A1.5 1.5 0 0 1 19 21H5a1.5 1.5 0 0 1-1.5-1.5v-12A1.5 1.5 0 0 1 5 6h3V3Z" fill="currentColor"/><path d="M9 3h6v4H9zM8 11h2m4 0h2m-8 4h2m4 0h2" stroke="#fff" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>', "Total de chamados", len(st.session_state.lista_chamados)),
+    ("aberto", '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="currentColor"/><path d="M12 6.5v5.8l4 2.4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>', "Abertos", contar("Aberto")),
+    ("andamento", '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 8A8.8 8.8 0 0 0 5 5.5L3 8.2M3.2 4.5v3.8H7M3.5 16A8.8 8.8 0 0 0 19 18.5l2-2.7m-.2 3.7v-3.8H17" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>', "Em andamento", contar("Em andamento")),
+    ("resolvido", '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="m7 12.2 3.2 3.1L17.5 8" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>', "Resolvidos", contar("Resolvido")),
+]
+metric_cols = st.columns(4, gap="small")
+for col, (classe, icone, rotulo, valor) in zip(metric_cols, metricas):
+    with col:
+        st.markdown(
+            f'<div class="metric-card {classe}"><div class="metric-icon">{icone}</div>'
+            f'<div class="metric-copy"><div class="metric-label">{rotulo}</div>'
+            f'<div class="metric-value">{valor}</div></div></div>',
+            unsafe_allow_html=True,
+        )
+
+st.divider()
+
+# --- GERENCIAMENTO DA JANELA FLUTUANTE OU ABA NA BARRA INFERIOR ---
+if st.session_state.chamado_detalhe_id is not None:
+    chamado_atual = next((c for c in st.session_state.lista_chamados if c["id"] == st.session_state.chamado_detalhe_id), None)
+    if chamado_atual:
+        if st.session_state.modal_minimized:
+            # Aba na barra de tarefas inferior (alinhada ao lado da sidebar)
+            with st.container(key="taskbar_tab", border=True):
+                col_t1, col_t2, col_t3 = st.columns([3.2, 1, 1], vertical_alignment="center")
+                with col_t1:
+                    st.markdown(f"📋 **#{str(chamado_atual['id']).zfill(3)}**")
+                with col_t2:
+                    if st.button("❐", key="btn_restore_tb", help="Restaurar"):
+                        st.session_state.modal_minimized = False
+                        st.rerun()
+                with col_t3:
+                    if st.button("×", key="btn_close_tb", help="Fechar"):
+                        st.session_state.chamado_detalhe_id = None
+                        st.session_state.modal_minimized = False
+                        st.session_state.modal_maximized = False
+                        st.rerun()
+        else:
+            max_css = ""
+            if st.session_state.modal_maximized:
+                max_css = """
+                .st-key-modal_container {
+                    top: 10px !important;
+                    left: 10px !important;
+                    transform: none !important;
+                    width: calc(100vw - 20px) !important;
+                    height: calc(100vh - 20px) !important;
+                    max-width: none !important;
+                    max-height: none !important;
+                }
+                """
+            st.markdown(f"<style>{max_css}</style>", unsafe_allow_html=True)
+
+            with st.container(key="modal_container", border=True):
+                # Cabeçalho unificado e elegante na mesma linha
+                ch_titulo, ch_min, ch_max, ch_fechar = st.columns([5.2, 1, 1, 1], vertical_alignment="center")
+                with ch_titulo:
+                    st.markdown(f"**📋 Detalhes #{str(chamado_atual['id']).zfill(3)}**")
+                with ch_min:
+                    if st.button("−", key="btn_min_modal", help="Minimizar", use_container_width=True):
+                        st.session_state.modal_minimized = True
+                        st.rerun()
+                with ch_max:
+                    simbolo_max = "❐" if st.session_state.modal_maximized else "□"
+                    if st.button(simbolo_max, key="btn_max_modal", help="Maximizar/Restaurar", use_container_width=True):
+                        st.session_state.modal_maximized = not st.session_state.modal_maximized
+                        st.rerun()
+                with ch_fechar:
+                    if st.button("×", key="btn_close_modal", help="Fechar", use_container_width=True):
+                        st.session_state.chamado_detalhe_id = None
+                        st.session_state.modal_minimized = False
+                        st.session_state.modal_maximized = False
+                        st.rerun()
+
+                # Script JavaScript para arrastar a janela flutuante pelo cabeçalho
+                try:
+                    st.html("""
+                    <script>
+                    (() => {
+                      function initDrag() {
+                        const modal = document.querySelector('.st-key-modal_container');
+                        if (!modal || modal.dataset.dragInitialized === 'true') return;
+                        modal.dataset.dragInitialized = 'true';
+
+                        const header = modal.querySelector('[data-testid="stHorizontalBlock"]');
+                        if (!header) return;
+
+                        header.style.cursor = 'move';
+                        let isDragging = false, startX, startY, initialLeft, initialTop;
+
+                        header.addEventListener('pointerdown', (e) => {
+                          if (e.target.closest('button')) return;
+                          isDragging = true;
+                          startX = e.clientX;
+                          startY = e.clientY;
+
+                          const rect = modal.getBoundingClientRect();
+                          modal.style.transform = 'none';
+                          modal.style.position = 'fixed';
+                          modal.style.left = rect.left + 'px';
+                          modal.style.top = rect.top + 'px';
+                          modal.style.margin = '0';
+                          modal.style.bottom = 'auto';
+                          modal.style.right = 'auto';
+
+                          initialLeft = rect.left;
+                          initialTop = rect.top;
+
+                          try { header.setPointerCapture(e.pointerId); } catch(err) {}
+                          e.preventDefault();
+                        });
+
+                        header.addEventListener('pointermove', (e) => {
+                          if (!isDragging) return;
+                          const dx = e.clientX - startX;
+                          const dy = e.clientY - startY;
+                          modal.style.left = (initialLeft + dx) + 'px';
+                          modal.style.top = (initialTop + dy) + 'px';
+                        });
+
+                        function stopDrag(e) {
+                          if (!isDragging) return;
+                          isDragging = false;
+                          try { header.releasePointerCapture(e.pointerId); } catch(err) {}
+                        }
+
+                        header.addEventListener('pointerup', stopDrag);
+                        header.addEventListener('pointercancel', stopDrag);
+                      }
+
+                      initDrag();
+                      const observer = new MutationObserver(initDrag);
+                      observer.observe(document.body, { childList: true, subtree: true });
+                    })();
+                    </script>
+                    """, unsafe_allow_javascript=True)
+                except TypeError:
+                    pass
+
+                st.divider()
+
+                status_css = {
+                    "Aberto": {"cor": "#f97316", "fundo": "#fff7ed"},
+                    "Em andamento": {"cor": "#1677f2", "fundo": "#eff6ff"},
+                    "Resolvido": {"cor": "#16834a", "fundo": "#effcf3"},
+                }
+                config_modal = status_css.get(chamado_atual["status"], {"cor": "#1677f2", "fundo": "#eff6ff"})
+                
+                st.markdown(
+                    f"""
+                    <div style="display: inline-flex; align-items: center; gap: 8px; border: 1.5px solid {config_modal['cor']}; 
+                         border-radius: 999px; background-color: {config_modal['fundo']}; padding: 4px 14px; margin-bottom: 12px;">
+                        <span style="width: 8px; height: 8px; background-color: {config_modal['cor']}; border-radius: 50%; display: inline-block;"></span>
+                        <span style="color: {config_modal['cor']}; font-weight: 700; font-size: 0.85rem; font-family: sans-serif;">{chamado_atual['status']}</span>
+                    </div>
+                    """, 
+                    unsafe_allow_html=True
+                )
+                
+                st.markdown(f"**TÍTULO DO CHAMADO**\n\n{escape(chamado_atual['titulo'])}")
+                st.divider()
+                st.markdown(f"**DESCRIÇÃO COMPLETA**\n\n{escape(chamado_atual['descricao'])}")
+                st.divider()
+                
+                c1, c2 = st.columns(2)
+                with c1:
+                    st.markdown(f"👤 **Solicitante**\n\n{escape(chamado_atual['solicitante'])}")
+                    st.markdown(f"📅 **Data de abertura**\n\n{escape(chamado_atual.get('data', '—'))}")
+                with c2:
+                    st.markdown(f"▦ **Categoria**\n\n{escape(chamado_atual['categoria'])}")
+                    st.markdown(f"⚡ **Prioridade**\n\n{escape(chamado_atual['prioridade'])}")
+                    
+                st.divider()
+                st.caption("Alterações de status e outras ações podem ser feitas diretamente na listagem principal.")
+    else:
+        st.session_state.chamado_detalhe_id = None
+
+col_chamados, col_formulario = st.columns([1.42, 1], gap="medium")
+
+with col_chamados:
+    st.subheader("Chamados registrados")
+    if not st.session_state.lista_chamados:
+        st.info("Nenhum chamado cadastrado ainda. Use o formulário ao lado para abrir o primeiro.")
+
+    for chamado in reversed(st.session_state.lista_chamados):
+        with st.container(border=True):
+            col_conteudo, col_status_fixo = st.columns([3.0, 1.15], vertical_alignment="center")
+            
+            with col_conteudo:
+                st.markdown(f'<div class="ticket-title">{escape(chamado["titulo"])}</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="ticket-description">{escape(chamado["descricao"])}</div>', unsafe_allow_html=True)
+                
+                st.markdown(
+                    f"""
+                    <div class="ticket-meta" style="display: flex; align-items: center; gap: 12px; color: #68809b; font-size: 0.78rem;">
+                        <span style="display: flex; align-items: center; gap: 4px;">
+                            <svg style="width: 14px; height: 14px; color: #1677f2;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            {escape(chamado["solicitante"])}
+                        </span>
+                        <span class="meta-divider" style="color: #c4d2e1;">|</span>
+                        <span style="display: flex; align-items: center; gap: 4px;">
+                            <svg style="width: 14px; height: 14px; color: #1677f2;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                            {escape(chamado.get("data", "—"))}
+                        </span>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+                
+                prioridade = chamado.get("prioridade", "Média")
+                prioridade_class = PRIORIDADE_CLASSES.get(prioridade, "media")
+                st.markdown(
+                    f'<div class="ticket-priority prioridade-{prioridade_class}" style="margin-top: 6px;">'
+                    f'<span class="priority-dot"></span> Prioridade {escape(prioridade)}</div>',
+                    unsafe_allow_html=True,
+                )
+                
+            with col_status_fixo:
+                status_css_dict = {
+                    "Aberto": {"cor": "#f97316", "fundo": "#fff7ed", "label": "Aberto"},
+                    "Em andamento": {"cor": "#1677f2", "fundo": "#eff6ff", "label": "Em andamento"},
+                    "Resolvido": {"cor": "#16834a", "fundo": "#effcf3", "label": "Resolvido"},
+                }
+                config_st = status_css_dict.get(chamado["status"], status_css_dict["Em andamento"])
+
+                st.markdown(
+                    f"""
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        border: 1.5px solid {config_st['cor']};
+                        border-radius: 999px;
+                        background-color: {config_st['fundo']};
+                        min-height: 36px;
+                        padding: 0 14px;
+                        cursor: pointer;
+                        user-select: none;
+                        margin-bottom: 25px;
+                    ">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="width: 8px; height: 8px; background-color: {config_st['cor']}; border-radius: 50%; display: inline-block;"></span>
+                            <span style="color: {config_st['cor']}; font-weight: 700; font-size: 0.85rem; font-family: sans-serif;">{config_st['label']}</span>
+                        </div>
+                        <span style="color: {config_st['cor']}; font-size: 0.75rem;">▼</span>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+                novo_status = st.selectbox(
+                    "Alterar status",
+                    STATUS,
+                    index=STATUS.index(chamado["status"]),
+                    key=f"select_acao_{chamado['id']}",
+                    label_visibility="collapsed"
+                )
+
+                st.markdown(
+                    f"""
+                    <style>
+                    .st-key-select_acao_{chamado['id']} {{
+                        margin-top: -61px !important;
+                        opacity: 0.01 !important;
+                        position: relative !important;
+                        z-index: 10 !important;
+                    }}
+                    </style>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+                if novo_status != chamado["status"]:
+                    salvar_status(chamado["id"], novo_status)
+                    st.rerun()
+                
+                st.markdown(
+                    f"""
+                    <style>
+                    .st-key-btn_detalhe_{chamado['id']} {{
+                        margin-top: -15px !important;
+                        display: flex !important;
+                        justify-content: flex-end !important;
+                        width: 100% !important;
+                    }}
+                    .st-key-btn_detalhe_{chamado['id']} [data-testid="stButton"] {{
+                        width: auto !important;
+                        display: flex !important;
+                        justify-content: flex-end !important;
+                    }}
+                    .st-key-btn_detalhe_{chamado['id']} button {{
+                        background-color: transparent !important;
+                        border: none !important;
+                        border-radius: 6px !important;
+                        padding: 4px 10px !important;
+                        color: #1769b0 !important;
+                        font-family: sans-serif !important;
+                        font-size: 0.8rem !important;
+                        font-weight: 650 !important;
+                        cursor: pointer !important;
+                        box-shadow: none !important;
+                        transition: all 0.15s ease !important;
+                        width: auto !important;
+                        min-height: auto !important;
+                        display: inline-flex !important;
+                        align-items: center !important;
+                        justify-content: center !important;
+                        gap: 6px !important;
+                        margin-left: auto !important;
+                    }}
+                    .st-key-btn_detalhe_{chamado['id']} button::before {{
+                        content: "" !important;
+                        display: inline-block !important;
+                        width: 14px !important;
+                        height: 14px !important;
+                        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231769b0' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'></path><polyline points='14 2 14 8 20 8'></polyline><line x1='16' y1='13' x2='8' y2='13'></line><line x1='16' y1='17' x2='8' y2='17'></line><polyline points='10 9 9 9 8 9'></polyline></svg>") !important;
+                        background-size: contain !important;
+                        background-repeat: no-repeat !important;
+                    }}
+                    .st-key-btn_detalhe_{chamado['id']} button:hover {{
+                        background-color: #f0f7ff !important;
+                        color: #12548e !important;
+                    }}
+                    .st-key-btn_detalhe_{chamado['id']} button:hover::before {{
+                        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2312548e' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'></path><polyline points='14 2 14 8 20 8'></polyline><line x1='16' y1='13' x2='8' y2='13'></line><line x1='16' y1='17' x2='8' y2='17'></line><polyline points='10 9 9 9 8 9'></polyline></svg>") !important;
+                    }}
+                    .st-key-btn_detalhe_{chamado['id']} button p {{
+                        color: inherit !important;
+                        font-weight: 650 !important;
+                        margin: 0 !important;
+                    }}
+                    </style>
+                    """,
+                    unsafe_allow_html=True
+                )
+                
+                if st.button("Ver detalhes", key=f"btn_detalhe_{chamado['id']}"):
+                    st.session_state.chamado_detalhe_id = chamado["id"]
+                    st.session_state.modal_minimized = False
+                    st.session_state.modal_maximized = False
+                    st.rerun()
+
+with col_formulario:
+    with st.container(border=True):
+        st.subheader("Abrir novo chamado")
+        st.caption("Preencha os dados abaixo para registrar uma nova solicitação.")
+        with st.form("form_novo_chamado", clear_on_submit=True):
+            titulo = st.text_input("Título do chamado *", placeholder="Ex.: Computador não liga")
+            solicitante = st.text_input("Nome do solicitante *", placeholder="Nome completo")
+            categoria = st.selectbox("Categoria", CATEGORIAS)
+            prioridade = st.selectbox("Prioridade", PRIORIDADES, index=1)
+            descricao = st.text_area("Descrição *", placeholder="Descreva o problema com o máximo de detalhes possível...", height=82)
+            enviar = st.form_submit_button("➤  Registrar chamado", use_container_width=True)
+
+        if enviar:
+            if not titulo.strip() or not solicitante.strip() or not descricao.strip():
+                st.error("Preencha a título, o nome do solicitante e a descrição.")
+            else:
+                criar_chamado(
+                    titulo.strip(), solicitante.strip(), categoria,
+                    descricao.strip(), prioridade
+                )
+                st.session_state.lista_chamados = listar_chamados()
+                st.success("Chamado registrado com sucesso!")
+                st.rerun()
