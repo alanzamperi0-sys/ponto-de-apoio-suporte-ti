@@ -1,68 +1,432 @@
+/* Ponto de Apoio — estilos alinhados ao print de referência */
+:root { --navy:#102b3a; --blue:#1769b0; --line:#d7e5f5; --text:#10233f; --muted:#607895; }
+.stApp, [data-testid="stAppViewContainer"] > .main { background:#fbfdff; color:var(--text); }
+[data-testid="stMainBlockContainer"] { max-width:1680px; padding:.65rem 1.2rem 1.2rem; }
+h1 { color:#10233f; font-size:1.9rem; font-weight:800; letter-spacing:-.025em; margin:.2rem 0 .25rem; }
+h2 { color:#10233f; font-size:1.2rem; font-weight:750; }
+h3 { color:#10233f; }
+p, [data-testid="stCaptionContainer"] { color:var(--muted); }
+[data-testid="stHorizontalBlock"] { gap:.65rem; }
 
-/* SIDEBAR COMPACTA: mantém a faixa azul-marinho ao recolher */
-section[data-testid="stSidebar"][aria-expanded="false"] {
-    width: 130px !important;
-    min-width: 130px !important;
-    max-width: 130px !important;
-    flex: 0 0 130px !important;
-    transform: none !important;
-    margin-left: 0 !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    overflow: hidden !important;
-    background: linear-gradient(
-        180deg, #102b3a 0%, #173746 100%
-    ) !important;
-    transition: width 0.2s ease !important;
+/* Sidebar */
+[data-testid="stSidebar"] { width:15.5rem !important; min-width:15.5rem !important; max-width:15.5rem !important; background:linear-gradient(180deg,#102b3a 0%,#173746 100%); border-right:1px solid rgba(255,255,255,.06); }
+[data-testid="stSidebar"] > div { padding:1.15rem .75rem; }
+[data-testid="stSidebar"] * { color:#eef6ff; }
+.sidebar-brand { display:flex; align-items:center; gap:.7rem; padding:.55rem .45rem 2.3rem; }
+.sidebar-icon { display:flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:12px; background:#f1f7fb; color:#15394c; font-size:1.3rem; flex-shrink:0; }
+.sidebar-title { font-size:1rem; font-weight:800; line-height:1.3; }
+.sidebar-subtitle { margin-top:.15rem; font-size:.63rem; letter-spacing:.16em; opacity:.75; }
+.sidebar-section { color:#a8c2d2 !important; font-size:.66rem; letter-spacing:.13em; padding:.2rem .5rem .7rem; }
+.sidebar-nav-active { padding:.75rem .8rem; border-radius:10px; background:rgba(119,174,216,.2); border:1px solid rgba(201,229,250,.16); font-weight:750; }
+.sidebar-note { width:100%; max-width:none; box-sizing:border-box; display:block;
+  margin-top:min(48vh,25rem); margin-left:0; margin-right:0; padding:1rem;
+  border:1px solid rgba(207,231,247,.14); border-radius:12px;
+  background:rgba(0,0,0,.10); font-size:.78rem; line-height:1.5; color:#d9e9f5 !important; }
+.sidebar-note strong { color:#fff !important; }
+
+/* Topo */
+.topo { display:flex; align-items:center; justify-content:space-between; gap:1rem; min-height:54px; padding:.6rem 1rem; margin:0 0 1rem; border-radius:12px; background:linear-gradient(110deg,#173c70 0%,#176ca8 100%); color:#fff !important; box-shadow:0 3px 10px rgba(23,76,128,.08); }
+.topo * { color:#fff !important; }
+.topo-marca { display:flex; align-items:center; gap:.7rem; }
+.topo-icone { display:flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:10px; background:rgba(255,255,255,.15); font-size:1.15rem; }
+.marca { font-size:1.02rem; font-weight:800; }
+.submarca { margin-top:.1rem; font-size:.61rem; letter-spacing:.15em; font-weight:700; opacity:.85; }
+.topo-legenda { font-size:.78rem; font-weight:650; opacity:.95; }
+
+/* Metric cards with icon badges */
+.metric-card { display:flex; align-items:center; gap:.75rem; min-height:78px; padding:.7rem .85rem; border:1px solid #d4e4f6; border-radius:10px; background:linear-gradient(135deg,#fff 0%,#f7fbff 100%); box-sizing:border-box; }
+.metric-icon { display:flex; align-items:center; justify-content:center; width:38px; height:38px; flex:0 0 38px; border-radius:11px; }
+.metric-icon svg { width:23px; height:23px; display:block; }
+.metric-card.total .metric-icon { background:#ffe0bd; color:#f07816; }
+.metric-card.aberto .metric-icon { background:#e1efff; border:1px solid #78adff; color:#0876df; }
+.metric-card.andamento .metric-icon { background:#cceeff; color:#0797dc; }
+.metric-card.resolvido .metric-icon { background:#d6f3df; color:#168047; }
+.metric-copy { min-width:0; }
+.metric-label { color:#27577e; font-size:.78rem; font-weight:650; line-height:1.3; }
+.metric-value { color:#10233f; font-size:1.5rem; font-weight:750; line-height:1.25; margin-top:.12rem; }
+
+/* Ticket cards */
+[data-testid="stVerticalBlockBorderWrapper"] { border-radius:10px; border-color:#d7e5f5; background:#fff; }
+[data-testid="stVerticalBlockBorderWrapper"] > div { padding:.75rem; }
+.ticket-title { color:#10233f; font-size:1.02rem; font-weight:750; line-height:1.35; }
+.ticket-description { color:#607895; font-size:.82rem; line-height:1.45; margin:.2rem 0 .6rem; }
+.ticket-meta { display:flex; flex-wrap:wrap; align-items:center; gap:.55rem; color:#68809b; font-size:.75rem; margin:.2rem 0 .65rem; }
+.meta-divider { color:#c4d2e1; }
+.ticket-priority { font-size:.76rem; padding-top:.1rem; }
+.prioridade-alta { color:#c73535; font-weight:700; }
+.prioridade-media { color:#a36b00; font-weight:700; }
+.prioridade-baixa { color:#28734a; font-weight:700; }
+.priority-dot { display:inline-block; width:.48rem; height:.48rem; margin-right:.25rem; border-radius:50%; background:currentColor; }
+
+/* Status selectbox: a aparência de etiqueta com seta para baixo */
+[data-testid="stSelectbox"] [data-baseweb="select"] > div {
+  min-height:36px; border:1.5px solid #1677f2; border-radius:999px;
+  background:#eff6ff; box-shadow:none; transition:background .15s ease,border-color .15s ease;
+}
+[data-testid="stSelectbox"] [data-baseweb="select"] div,
+[data-testid="stSelectbox"] [data-baseweb="select"] input { font-size:.78rem; font-weight:650; }
+[data-testid="stSelectbox"] [data-baseweb="select"] svg { color:inherit; }
+[data-testid="stSelectbox"] [data-baseweb="select"] > div:focus-within { box-shadow:0 0 0 2px rgba(22,119,242,.13); }
+
+/* Form */
+[data-testid="stForm"] { border:0; padding:0; border-radius:0; background:transparent; }
+[data-testid="stTextInput"] input, [data-testid="stTextArea"] textarea {
+  border-radius:8px; color:#243d5a;
+}
+/* O arredondamento do seletor de status é definido por regras específicas no app.py. */
+[data-testid="stSelectbox"] [data-baseweb="select"] > div {
+  color:#243d5a;
+}
+[data-testid="stTextInput"] input, [data-testid="stTextArea"] textarea { border:1px solid #dce7f5; background:#f0f5fb; }
+[data-testid="stWidgetLabel"] p { color:#36516f; font-size:.76rem; font-weight:650; }
+[data-testid="stFormSubmitButton"] button { min-height:39px; border:0; border-radius:8px; background:linear-gradient(100deg,#1169c8,#0876df); color:#fff; font-weight:750; }
+[data-testid="stFormSubmitButton"] button:hover { background:#0c61bb; color:#fff; }
+hr { border-color:#dce7f5; margin:.9rem 0; }
+@media (max-width:1000px) {
+  [data-testid="stMainBlockContainer"] { padding:.6rem .75rem 1rem; }
+  .metric-card { gap:.45rem; padding:.55rem; }
+  .metric-icon { width:32px; height:32px; flex-basis:32px; }
+}
+@media (max-width:700px) {
+  .topo { align-items:flex-start; }
+  .topo-legenda { font-size:.68rem; }
+  .sidebar-note { margin-top:1.5rem; }
 }
 
-/* Mantém o interior na largura da faixa */
-section[data-testid="stSidebar"][aria-expanded="false"] > div {
-    width: 130px !important;
-    min-width: 130px !important;
-    max-width: 130px !important;
-    padding: 1rem 0.4rem !important;
-    overflow: hidden !important;
-}
 
-/* Deixa apenas o ícone do fone no conteúdo */
-section[data-testid="stSidebar"][aria-expanded="false"]
-.sidebar-brand {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    padding: 0.5rem 0 0 !important;
-    width: 100% !important;
+/* Correções finais solicitadas */
+[data-testid="stMainBlockContainer"] {
+  padding-top: 1.65rem !important;
 }
-
-section[data-testid="stSidebar"][aria-expanded="false"]
-.sidebar-brand > div:not(.sidebar-icon) {
-    display: none !important;
+.topo {
+  min-height: 68px !important;
+  margin-top: .2rem !important;
+  margin-bottom: 1.05rem !important;
+  padding: .7rem 1rem !important;
+  overflow: visible !important;
 }
-
-section[data-testid="stSidebar"][aria-expanded="false"]
-.sidebar-section,
-section[data-testid="stSidebar"][aria-expanded="false"]
-.sidebar-nav-active,
-section[data-testid="stSidebar"][aria-expanded="false"]
+[data-testid="stHeader"] {
+  background: transparent !important;
+}
+/* Nota lateral ancorada perto do rodapé, não no meio da barra */
+[data-testid="stSidebar"] [data-testid="stVerticalBlock"] {
+  min-height: calc(100vh - 2rem);
+}
 .sidebar-note {
+  position: fixed !important;
+  bottom: 1rem !important;
+  left: .75rem !important;
+  width: calc(15.5rem - 1.5rem) !important;
+  max-width: calc(100vw - 1.5rem) !important;
+  margin-top: 0 !important;
+  box-sizing: border-box !important;
+}
+/* O botão de envio precisa ter contraste e texto branco nítido */
+[data-testid="stFormSubmitButton"] button,
+[data-testid="stFormSubmitButton"] button:hover,
+[data-testid="stFormSubmitButton"] button:focus,
+[data-testid="stFormSubmitButton"] button:active {
+  color: #fff !important;
+  opacity: 1 !important;
+  background: linear-gradient(100deg,#1169c8,#0876df) !important;
+}
+[data-testid="stFormSubmitButton"] button *,
+[data-testid="stFormSubmitButton"] button p,
+[data-testid="stFormSubmitButton"] button span,
+[data-testid="stFormSubmitButton"] button svg {
+  color: #fff !important;
+  fill: #fff !important;
+  opacity: 1 !important;
+  font-weight: 750 !important;
+}
+[data-testid="stFormSubmitButton"] button:disabled,
+[data-testid="stFormSubmitButton"] button:disabled * {
+  color: #fff !important;
+  opacity: 1 !important;
+}
+/* Status com aparência de etiqueta arredondada; a cor vem do status individual */
+[data-testid="stSelectbox"] [data-baseweb="select"] > div {
+  border-radius: 999px !important;
+  min-height: 34px !important;
+  box-shadow: none !important;
+}
+
+/* Ajuste definitivo: seletor de status em formato cápsula; cores individuais vêm do app.py */
+.st-key-status_chamado_1 [data-baseweb="select"] > div,
+.st-key-status_chamado_2 [data-baseweb="select"] > div,
+.st-key-status_chamado_3 [data-baseweb="select"] > div,
+.st-key-status_chamado_4 [data-baseweb="select"] > div,
+.st-key-status_chamado_5 [data-baseweb="select"] > div,
+.st-key-status_chamado_6 [data-baseweb="select"] > div,
+.st-key-status_chamado_7 [data-baseweb="select"] > div,
+.st-key-status_chamado_8 [data-baseweb="select"] > div,
+.st-key-status_chamado_9 [data-baseweb="select"] > div,
+.st-key-status_chamado_10 [data-baseweb="select"] > div {
+  border-radius:999px !important;
+  min-height:36px !important;
+}
+/* Janela flutuante arrastável para os detalhes */
+.custom-draggable-modal {
+    position: fixed;
+    top: 15vh;
+    left: 32vw;
+    width: 520px;
+    max-width: 90vw;
+    background: #ffffff;
+    border: 1.5px solid #d7e5f5;
+    border-radius: 14px;
+    box-shadow: 0 20px 40px rgba(16, 35, 63, 0.22);
+    z-index: 999999;
+    padding: 24px;
+    font-family: sans-serif;
+    box-sizing: border-box;
+}
+.modal-header-draggable {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: move;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #dce7f5;
+    margin-bottom: 16px;
+    user-select: none;
+}
+.modal-title-text {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #10233f;
+    margin: 0;
+}
+/* Janela flutuante móvel com controlos de sistema */
+.custom-draggable-modal {
+    position: fixed;
+    top: 15vh;
+    left: 32vw;
+    width: 520px;
+    max-width: 90vw;
+    background: #ffffff;
+    border: 1.5px solid #d7e5f5;
+    border-radius: 12px;
+    box-shadow: 0 20px 40px rgba(16, 35, 63, 0.22);
+    z-index: 999999;
+    padding: 20px;
+    font-family: sans-serif;
+    box-sizing: border-box;
+    transition: width 0.15s ease, height 0.15s ease, top 0.15s ease, left 0.15s ease;
+}
+
+.custom-draggable-modal.maximized {
+    top: 10px !important;
+    left: 10px !important;
+    width: calc(100vw - 20px) !important;
+    height: calc(100vh - 20px) !important;
+    max-width: none !important;
+}
+
+.custom-draggable-modal.minimized .modal-body-content {
     display: none !important;
 }
 
-/* Posiciona o botão nativo de expandir dentro da faixa */
-div[data-testid="stSidebarCollapsedControl"] {
+.custom-draggable-modal.minimized {
+    height: auto !important;
+}
+
+.modal-header-draggable {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: move;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #dce7f5;
+    margin-bottom: 16px;
+    user-select: none;
+}
+
+.modal-title-text {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #10233f;
+    margin: 0;
+}
+
+.window-controls {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.win-btn {
+    background: #f0f5fb;
+    border: 1.5px solid #dce7f5;
+    border-radius: 6px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #486581;
+    transition: all 0.15s ease;
+    padding: 0;
+}
+
+.win-btn:hover {
+    background: #1769b0;
+    color: #fff;
+    border-color: #1769b0;
+}
+
+.win-btn.win-close:hover {
+    background: #e53e3e;
+    border-color: #e53e3e;
+}
+
+/* Oculta o botão padrão do Streamlit já que o controlo está na barra da janela */
+.st-key-fechar_modal_flutuante {
+    display: none !important;
+}
+/* Janela de detalhes: controles tipo janela de navegador/sistema */
+/* Janela de detalhes flutuante, arrastável e com botões de controle estilo sistema */
+.ponto-modal-window {
+  position: fixed !important;
+  top: 15vh !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: min(540px, 92vw) !important;
+  max-width: 92vw !important;
+  max-height: 85vh !important;
+  overflow: auto !important;
+  z-index: 1000000 !important;
+  border: 1.5px solid #d7e5f5 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 20px 45px rgba(16,35,63,.24) !important;
+  background: #fff !important;
+  box-sizing: border-box !important;
+}
+
+.ponto-modal-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  cursor: move !important;
+  user-select: none !important;
+  touch-action: none !important;
+  padding-bottom: 8px !important;
+  border-bottom: 1px solid #dce7f5 !important;
+  margin-bottom: 12px !important;
+}
+
+.ponto-window-controls {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin-left: auto !important;
+  flex: 0 0 auto !important;
+}
+
+.ponto-win-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 28px !important;
+  height: 28px !important;
+  padding: 0 !important;
+  border-radius: 6px !important;
+  border: 1px solid #dce7f5 !important;
+  background: #f0f5fb !important;
+  color: #486581 !important;
+  font-size: 15px !important;
+  font-family: Arial, sans-serif !important;
+  font-weight: bold !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.ponto-win-btn:hover {
+  background: #1769b0 !important;
+  color: #fff !important;
+  border-color: #1769b0 !important;
+}
+
+.ponto-win-close:hover {
+  background: #e53e3e !important;
+  border-color: #e53e3e !important;
+  color: #fff !important;
+}
+
+.ponto-modal-window.ponto-maximized {
+  top: 10px !important;
+  left: 10px !important;
+  transform: none !important;
+  width: calc(100vw - 20px) !important;
+  height: calc(100vh - 20px) !important;
+  max-width: none !important;
+  max-height: none !important;
+}
+
+.ponto-modal-window.ponto-minimized {
+  height: auto !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.ponto-modal-window.ponto-minimized > *:not(:first-child) {
+  display: none !important;
+}
+
+.ponto-modal-window.ponto-dragging {
+  transition: none !important;
+}
+
+/* Ajustes robustos dos controles no diálogo do Streamlit */
+.ponto-modal-window { box-sizing: border-box !important; }
+.ponto-modal-header { position: relative !important; min-height: 32px !important; }
+.ponto-window-controls { position: relative; z-index: 1000001; }
+.ponto-win-btn { flex: 0 0 28px; font-family: Arial, sans-serif; }
+.ponto-modal-window.ponto-minimized > *:not(:first-child) { display: none !important; }
+
+/* Janela flutuante de detalhes (Modal) com redimensionamento livre (horizontal e vertical) */
+.st-key-modal_container {
     position: fixed !important;
-    top: 24px !important;
-    left: 78px !important;
-    z-index: 1002 !important;
-    transition: left 0.2s ease !important;
+    top: 15vh !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 540px; /* Removido o !important para permitir que o resize ajuste a largura */
+    max-width: 95vw !important;
+    min-width: 350px !important;
+    height: auto;
+    min-height: 250px !important;
+    max-height: 90vh !important;
+    overflow: auto !important;
+    resize: both !important; /* Libera o arraste nas pontas para os dois lados */
+    z-index: 999999 !important;
+    background: #ffffff !important;
+    box-shadow: 0 25px 50px rgba(16, 35, 63, 0.28) !important;
+    border-radius: 14px !important;
+    border: 1.5px solid #d7e5f5 !important;
 }
 
-/* Impede que a faixa mostre uma barra de rolagem */
-section[data-testid="stSidebar"][aria-expanded="false"] {
-    scrollbar-width: none !important;
+/* Garante que o conteúdo interno se adapte quando você puxar os lados */
+.st-key-modal_container [data-testid="stVerticalBlock"] {
+    width: 100% !important;
+    box-sizing: border-box !important;
 }
-
-section[data-testid="stSidebar"][aria-expanded="false"]::-webkit-scrollbar {
-    display: none !important;
+/* Aba na barra de tarefas inferior quando minimizado (deslocada para a direita para não tampar a barra lateral) */
+.st-key-taskbar_tab {
+    position: fixed !important;
+    bottom: 15px !important;
+    left: 270px !important;
+    width: 280px !important;
+    z-index: 999999 !important;
+    background: #ffffff !important;
+    box-shadow: 0 8px 25px rgba(16, 35, 63, 0.25) !important;
+    border-radius: 10px !important;
+    border: 1.5px solid #1677f2 !important;
+}
+.st-key-taskbar_tab [data-testid="stVerticalBlock"] {
+    padding: 6px 10px !important;
 }
