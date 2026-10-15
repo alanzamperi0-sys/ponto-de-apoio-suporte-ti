@@ -240,7 +240,7 @@ if st.session_state.chamado_detalhe_id is not None:
                 .st-key-taskbar_tab [data-testid="stHorizontalBlock"]:has(.st-key-btn_restore_tb) {
                     display: grid !important;
                     grid-template-columns: minmax(0, 1fr) 36px 36px !important;
-                    gap: 4px !important;
+                    gap: 2px !important;
                     align-items: center !important;
                     width: 100% !important;
                 }
@@ -351,7 +351,7 @@ if st.session_state.chamado_detalhe_id is not None:
             .st-key-modal_container [data-testid="stHorizontalBlock"]:has(.st-key-btn_min_modal) {
                 display: grid !important;
                 grid-template-columns: minmax(0, 1fr) 36px 36px 36px !important;
-                gap: 4px !important;
+                gap: 3px !important;
                 align-items: center !important;
                 width: 100% !important;
             }
@@ -539,7 +539,7 @@ if st.session_state.chamado_detalhe_id is not None:
                 }
                 .st-key-modal_container [data-testid="stHorizontalBlock"]:has(.st-key-btn_min_modal) {
                     grid-template-columns: minmax(0, 1fr) 36px 36px 36px !important;
-                    gap: 4px !important;
+                    gap: 3px !important;
                 }
                 .st-key-modal_container .st-key-btn_max_modal button::before {
                     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23173646' stroke-width='1.7' stroke-linejoin='round'%3E%3Cpath d='M8 8V4.8A.8.8 0 0 1 8.8 4h11.4a.8.8 0 0 1 .8.8v11.4a.8.8 0 0 1-.8.8H17'/%3E%3Crect x='3' y='8' width='14' height='13' rx='1'/%3E%3C/svg%3E") !important;
