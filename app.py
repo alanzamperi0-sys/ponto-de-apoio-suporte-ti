@@ -234,29 +234,40 @@ if st.session_state.chamado_detalhe_id is not None:
                 """
                 <style>
                 .st-key-taskbar_tab {
-                    width: 360px !important;
+                    width: 320px !important;
                     max-width: calc(100vw - 290px) !important;
                 }
                 .st-key-taskbar_tab .st-key-btn_restore_tb button,
                 .st-key-taskbar_tab .st-key-btn_close_tb button {
+                    display: inline-flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
                     min-height: 32px !important;
-                    min-width: 64px !important;
-                    width: 100% !important;
-                    padding: 0 8px !important;
-                    font-size: 0.74rem !important;
+                    min-width: 32px !important;
+                    width: 32px !important;
+                    max-width: 32px !important;
+                    padding: 0 !important;
+                    font-size: 1rem !important;
+                    line-height: 1 !important;
                     font-weight: 700 !important;
                     white-space: nowrap !important;
                     color: #173746 !important;
+                    -webkit-text-fill-color: #173746 !important;
                     background: #f0f5fb !important;
-                    border: 1px solid #dce7f5 !important;
+                    border: 1px solid #b9ccdf !important;
+                    border-radius: 6px !important;
                     opacity: 1 !important;
                 }
                 .st-key-taskbar_tab .st-key-btn_restore_tb button p,
-                .st-key-taskbar_tab .st-key-btn_close_tb button p {
+                .st-key-taskbar_tab .st-key-btn_close_tb button p,
+                .st-key-taskbar_tab .st-key-btn_restore_tb button span,
+                .st-key-taskbar_tab .st-key-btn_close_tb button span {
                     color: #173746 !important;
+                    -webkit-text-fill-color: #173746 !important;
                     opacity: 1 !important;
                     margin: 0 !important;
                     white-space: nowrap !important;
+                    line-height: 1 !important;
                 }
                 </style>
                 """,
@@ -265,21 +276,21 @@ if st.session_state.chamado_detalhe_id is not None:
             # Aba na barra de tarefas inferior (alinhada ao lado da sidebar)
             with st.container(key="taskbar_tab", border=True):
                 col_t1, col_t2, col_t3 = st.columns(
-                    [2.5, 1.6, 1.2], gap="small", vertical_alignment="center"
+                    [3.2, 0.48, 0.48], gap="small", vertical_alignment="center"
                 )
                 with col_t1:
                     st.markdown(f"📋 **Chamado #{str(chamado_atual['id']).zfill(3)}**")
                 with col_t2:
                     if st.button(
-                        "Restaurar", key="btn_restore_tb",
-                        help="Restaurar janela", use_container_width=True
+                        "#", key="btn_restore_tb",
+                        help="Restaurar janela", use_container_width=False
                     ):
                         st.session_state.modal_minimized = False
                         st.rerun()
                 with col_t3:
                     if st.button(
-                        "Fechar", key="btn_close_tb",
-                        help="Fechar janela", use_container_width=True
+                        "X", key="btn_close_tb",
+                        help="Fechar janela", use_container_width=False
                     ):
                         st.session_state.chamado_detalhe_id = None
                         st.session_state.modal_minimized = False
@@ -300,8 +311,8 @@ if st.session_state.chamado_detalhe_id is not None:
                 height: min(680px, 82vh) !important;
                 min-height: 340px !important;
                 max-height: calc(100dvh - 16px) !important;
-                overflow: auto !important;
-                resize: both !important;
+                overflow: hidden !important;
+                resize: none !important;
                 box-sizing: border-box !important;
                 z-index: 999999 !important;
             }
@@ -311,47 +322,46 @@ if st.session_state.chamado_detalhe_id is not None:
                 word-break: normal !important;
             }
 
+            /* Compact icons: hyphen = minimize, # = maximize/restore, X = close. */
             .st-key-modal_container .st-key-btn_min_modal button,
             .st-key-modal_container .st-key-btn_max_modal button,
             .st-key-modal_container .st-key-btn_close_modal button {
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
                 min-height: 30px !important;
-                min-width: 42px !important;
-                padding: 0 6px !important;
-                font-size: 0.72rem !important;
+                min-width: 32px !important;
+                width: 32px !important;
+                max-width: 32px !important;
+                padding: 0 !important;
+                font-family: Arial, sans-serif !important;
+                font-size: 1rem !important;
+                line-height: 1 !important;
                 font-weight: 700 !important;
                 white-space: nowrap !important;
                 color: #173746 !important;
+                -webkit-text-fill-color: #173746 !important;
                 background: #f0f5fb !important;
-                border: 1px solid #dce7f5 !important;
+                border: 1px solid #b9ccdf !important;
+                border-radius: 6px !important;
                 opacity: 1 !important;
+                box-shadow: none !important;
             }
             .st-key-modal_container .st-key-btn_min_modal button p,
             .st-key-modal_container .st-key-btn_max_modal button p,
-            .st-key-modal_container .st-key-btn_close_modal button p {
+            .st-key-modal_container .st-key-btn_close_modal button p,
+            .st-key-modal_container .st-key-btn_min_modal button span,
+            .st-key-modal_container .st-key-btn_max_modal button span,
+            .st-key-modal_container .st-key-btn_close_modal button span {
                 color: #173746 !important;
+                -webkit-text-fill-color: #173746 !important;
                 opacity: 1 !important;
                 margin: 0 !important;
+                padding: 0 !important;
+                line-height: 1 !important;
             }
-            .st-key-taskbar_tab .st-key-btn_restore_tb button,
-            .st-key-taskbar_tab .st-key-btn_close_tb button {
-                min-height: 32px !important;
-                min-width: 66px !important;
-                width: 100% !important;
-                padding: 0 8px !important;
-                font-size: 0.74rem !important;
-                font-weight: 700 !important;
-                white-space: nowrap !important;
-                color: #173746 !important;
-                background: #f0f5fb !important;
-                border: 1px solid #dce7f5 !important;
-                opacity: 1 !important;
-            }
-            .st-key-taskbar_tab .st-key-btn_restore_tb button p,
-            .st-key-taskbar_tab .st-key-btn_close_tb button p {
-                color: #173746 !important;
-                opacity: 1 !important;
-                margin: 0 !important;
-                white-space: nowrap !important;
+            .st-key-modal_container [data-testid="stHorizontalBlock"]:has(.st-key-btn_min_modal) {
+                gap: 0.15rem !important;
             }
 
             .st-key-modal_body {
@@ -362,7 +372,7 @@ if st.session_state.chamado_detalhe_id is not None:
                 scrollbar-width: thin !important;
                 min-height: 0 !important;
                 box-sizing: border-box !important;
-                padding-right: 6px !important;
+                padding-right: 8px !important;
             }
 
             .st-key-modal_body > div,
@@ -370,6 +380,53 @@ if st.session_state.chamado_detalhe_id is not None:
                 min-height: 0 !important;
                 overflow: visible !important;
                 box-sizing: border-box !important;
+            }
+
+            /* Eight invisible handles allow resizing from every side and corner. */
+            .st-key-modal_container .modal-resize-handle {
+                position: absolute !important;
+                display: block !important;
+                z-index: 1000002 !important;
+                background: transparent !important;
+                touch-action: none !important;
+                user-select: none !important;
+            }
+            .st-key-modal_container .modal-resize-n,
+            .st-key-modal_container .modal-resize-s {
+                left: 14px !important;
+                right: 14px !important;
+                height: 8px !important;
+                cursor: ns-resize !important;
+            }
+            .st-key-modal_container .modal-resize-n { top: 0 !important; }
+            .st-key-modal_container .modal-resize-s { bottom: 0 !important; }
+            .st-key-modal_container .modal-resize-e,
+            .st-key-modal_container .modal-resize-w {
+                top: 14px !important;
+                bottom: 14px !important;
+                width: 8px !important;
+                cursor: ew-resize !important;
+            }
+            .st-key-modal_container .modal-resize-e { right: 0 !important; }
+            .st-key-modal_container .modal-resize-w { left: 0 !important; }
+            .st-key-modal_container .modal-resize-nw,
+            .st-key-modal_container .modal-resize-ne,
+            .st-key-modal_container .modal-resize-sw,
+            .st-key-modal_container .modal-resize-se {
+                width: 16px !important;
+                height: 16px !important;
+            }
+            .st-key-modal_container .modal-resize-nw { top: 0 !important; left: 0 !important; cursor: nwse-resize !important; }
+            .st-key-modal_container .modal-resize-ne { top: 0 !important; right: 0 !important; cursor: nesw-resize !important; }
+            .st-key-modal_container .modal-resize-sw { bottom: 0 !important; left: 0 !important; cursor: nesw-resize !important; }
+            .st-key-modal_container .modal-resize-se {
+                bottom: 0 !important;
+                right: 0 !important;
+                cursor: nwse-resize !important;
+                background: linear-gradient(135deg, transparent 58%, #9aafc2 59%, #9aafc2 65%, transparent 66%, transparent 75%, #9aafc2 76%, #9aafc2 82%, transparent 83%) !important;
+            }
+            .st-key-modal_container.modal-maximized .modal-resize-handle {
+                display: none !important;
             }
             """
 
@@ -386,98 +443,184 @@ if st.session_state.chamado_detalhe_id is not None:
                     max-width: none !important;
                     max-height: calc(100dvh - 20px) !important;
                     resize: none !important;
+                    overflow: hidden !important;
                 }
                 .st-key-modal_body {
                     max-height: calc(100dvh - 105px) !important;
+                    overflow-y: auto !important;
+                }
+                .st-key-modal_container .modal-resize-handle {
+                    display: none !important;
                 }
                 """
             st.markdown(f"<style>{max_css}</style>", unsafe_allow_html=True)
 
             with st.container(key="modal_container", border=True):
                 # Cabeçalho unificado e elegante na mesma linha
-                ch_titulo, ch_controles = st.columns([5.4, 3.1], gap="small", vertical_alignment="center")
+                ch_titulo, b_min, b_max, b_fechar = st.columns(
+                    [8.0, 0.48, 0.48, 0.48], gap="small", vertical_alignment="center"
+                )
                 with ch_titulo:
                     st.markdown(f"**📋 Detalhes #{str(chamado_atual['id']).zfill(3)}**")
-                with ch_controles:
-                    b_min, b_max, b_fechar = st.columns([1, 1, 1], gap="small", vertical_alignment="center")
-                    with b_min:
-                        if st.button("Min", key="btn_min_modal", help="Minimizar janela", use_container_width=True):
-                            st.session_state.modal_minimized = True
-                            st.rerun()
-                    with b_max:
-                        texto_max = "Rest." if st.session_state.modal_maximized else "Max"
-                        if st.button(texto_max, key="btn_max_modal", help="Maximizar ou restaurar janela", use_container_width=True):
-                            st.session_state.modal_maximized = not st.session_state.modal_maximized
-                            st.rerun()
-                    with b_fechar:
-                        if st.button("X", key="btn_close_modal", help="Fechar janela", use_container_width=True):
-                            st.session_state.chamado_detalhe_id = None
-                            st.session_state.modal_minimized = False
-                            st.session_state.modal_maximized = False
-                            st.rerun()
+                with b_min:
+                    if st.button("-", key="btn_min_modal", help="Minimizar janela", use_container_width=False):
+                        st.session_state.modal_minimized = True
+                        st.rerun()
+                with b_max:
+                    if st.button("#", key="btn_max_modal", help="Maximizar ou restaurar janela", use_container_width=False):
+                        st.session_state.modal_maximized = not st.session_state.modal_maximized
+                        st.rerun()
+                with b_fechar:
+                    if st.button("X", key="btn_close_modal", help="Fechar janela", use_container_width=False):
+                        st.session_state.chamado_detalhe_id = None
+                        st.session_state.modal_minimized = False
+                        st.session_state.modal_maximized = False
+                        st.rerun()
 
-                # Script JavaScript para arrastar a janela flutuante pelo cabeçalho
-                try:
-                    st.html("""
-                    <script>
-                    (() => {
-                      function initDrag() {
-                        const modal = document.querySelector('.st-key-modal_container');
-                        if (!modal || modal.dataset.dragInitialized === 'true') return;
-                        modal.dataset.dragInitialized = 'true';
+                # Arraste pelo cabeçalho e redimensione pelas quatro laterais e pelos quatro cantos.
+                modal_script = """
+                <script>
+                (() => {
+                  const isMaximized = __MAXIMIZED__;
 
-                        const header = modal.querySelector('[data-testid="stHorizontalBlock"]');
-                        if (!header) return;
+                  function initModal() {
+                    const modal = document.querySelector('.st-key-modal_container');
+                    if (!modal) return;
+                    modal.classList.toggle('modal-maximized', isMaximized);
 
-                        header.style.cursor = 'move';
-                        let isDragging = false, startX, startY, initialLeft, initialTop;
+                    if (modal.dataset.resizeInitialized !== 'true') {
+                      const edges = ['n', 's', 'e', 'w', 'nw', 'ne', 'sw', 'se'];
+                      edges.forEach((edge) => {
+                        const handle = document.createElement('div');
+                        handle.className = 'modal-resize-handle modal-resize-' + edge;
+                        handle.dataset.edge = edge;
+                        handle.setAttribute('aria-hidden', 'true');
+                        modal.appendChild(handle);
 
-                        header.addEventListener('pointerdown', (e) => {
-                          if (e.target.closest('button')) return;
-                          isDragging = true;
-                          startX = e.clientX;
-                          startY = e.clientY;
+                        handle.addEventListener('pointerdown', (event) => {
+                          if (isMaximized || modal.classList.contains('modal-maximized')) return;
+                          event.preventDefault();
+                          event.stopPropagation();
 
                           const rect = modal.getBoundingClientRect();
+                          const startX = event.clientX;
+                          const startY = event.clientY;
+                          const startLeft = rect.left;
+                          const startTop = rect.top;
+                          const startWidth = rect.width;
+                          const startHeight = rect.height;
+                          const minWidth = 360;
+                          const minHeight = 280;
+
                           modal.style.setProperty('transform', 'none', 'important');
-                          modal.style.setProperty('position', 'fixed', 'important');
-                          modal.style.setProperty('left', rect.left + 'px', 'important');
-                          modal.style.setProperty('top', rect.top + 'px', 'important');
-                          modal.style.setProperty('margin', '0', 'important');
-                          modal.style.setProperty('bottom', 'auto', 'important');
+                          modal.style.setProperty('left', startLeft + 'px', 'important');
+                          modal.style.setProperty('top', startTop + 'px', 'important');
                           modal.style.setProperty('right', 'auto', 'important');
+                          modal.style.setProperty('bottom', 'auto', 'important');
 
-                          initialLeft = rect.left;
-                          initialTop = rect.top;
+                          const move = (moveEvent) => {
+                            const dx = moveEvent.clientX - startX;
+                            const dy = moveEvent.clientY - startY;
+                            let left = startLeft;
+                            let top = startTop;
+                            let width = startWidth;
+                            let height = startHeight;
 
-                          try { header.setPointerCapture(e.pointerId); } catch(err) {}
-                          e.preventDefault();
+                            if (edge.includes('e')) {
+                              width = Math.max(minWidth, Math.min(startWidth + dx, window.innerWidth - startLeft - 8));
+                            }
+                            if (edge.includes('w')) {
+                              width = Math.max(minWidth, Math.min(startWidth - dx, startLeft + startWidth - 8));
+                              left = startLeft + startWidth - width;
+                            }
+                            if (edge.includes('s')) {
+                              height = Math.max(minHeight, Math.min(startHeight + dy, window.innerHeight - startTop - 8));
+                            }
+                            if (edge.includes('n')) {
+                              height = Math.max(minHeight, Math.min(startHeight - dy, startTop + startHeight - 8));
+                              top = startTop + startHeight - height;
+                            }
+
+                            left = Math.max(8, Math.min(left, window.innerWidth - width - 8));
+                            top = Math.max(8, Math.min(top, window.innerHeight - height - 8));
+                            modal.style.setProperty('left', left + 'px', 'important');
+                            modal.style.setProperty('top', top + 'px', 'important');
+                            modal.style.setProperty('width', width + 'px', 'important');
+                            modal.style.setProperty('height', height + 'px', 'important');
+                          };
+
+                          const stop = () => {
+                            window.removeEventListener('pointermove', move);
+                            window.removeEventListener('pointerup', stop);
+                            window.removeEventListener('pointercancel', stop);
+                          };
+                          window.addEventListener('pointermove', move);
+                          window.addEventListener('pointerup', stop, { once: true });
+                          window.addEventListener('pointercancel', stop, { once: true });
                         });
+                      });
+                      modal.dataset.resizeInitialized = 'true';
+                    }
 
-                        header.addEventListener('pointermove', (e) => {
-                          if (!isDragging) return;
-                          const dx = e.clientX - startX;
-                          const dy = e.clientY - startY;
-                          modal.style.setProperty('left', (initialLeft + dx) + 'px', 'important');
-                          modal.style.setProperty('top', (initialTop + dy) + 'px', 'important');
-                        });
+                    if (modal.dataset.dragInitialized !== 'true') {
+                      const header = modal.querySelector('[data-testid="stHorizontalBlock"]');
+                      if (!header) return;
+                      header.style.cursor = 'move';
+                      let isDragging = false;
+                      let startX, startY, initialLeft, initialTop;
 
-                        function stopDrag(e) {
-                          if (!isDragging) return;
-                          isDragging = false;
-                          try { header.releasePointerCapture(e.pointerId); } catch(err) {}
-                        }
+                      header.addEventListener('pointerdown', (event) => {
+                        if (event.target.closest('button') || event.target.closest('.modal-resize-handle')) return;
+                        isDragging = true;
+                        startX = event.clientX;
+                        startY = event.clientY;
 
-                        header.addEventListener('pointerup', stopDrag);
-                        header.addEventListener('pointercancel', stopDrag);
+                        const rect = modal.getBoundingClientRect();
+                        modal.style.setProperty('transform', 'none', 'important');
+                        modal.style.setProperty('position', 'fixed', 'important');
+                        modal.style.setProperty('left', rect.left + 'px', 'important');
+                        modal.style.setProperty('top', rect.top + 'px', 'important');
+                        modal.style.setProperty('right', 'auto', 'important');
+                        modal.style.setProperty('bottom', 'auto', 'important');
+                        modal.style.setProperty('margin', '0', 'important');
+                        initialLeft = rect.left;
+                        initialTop = rect.top;
+                        try { header.setPointerCapture(event.pointerId); } catch (err) {}
+                        event.preventDefault();
+                      });
+
+                      header.addEventListener('pointermove', (event) => {
+                        if (!isDragging) return;
+                        const dx = event.clientX - startX;
+                        const dy = event.clientY - startY;
+                        const rect = modal.getBoundingClientRect();
+                        const maxLeft = Math.max(0, window.innerWidth - rect.width);
+                        const maxTop = Math.max(0, window.innerHeight - rect.height);
+                        const left = Math.max(0, Math.min(initialLeft + dx, maxLeft));
+                        const top = Math.max(0, Math.min(initialTop + dy, maxTop));
+                        modal.style.setProperty('left', left + 'px', 'important');
+                        modal.style.setProperty('top', top + 'px', 'important');
+                      });
+
+                      function stopDrag(event) {
+                        if (!isDragging) return;
+                        isDragging = false;
+                        try { header.releasePointerCapture(event.pointerId); } catch (err) {}
                       }
+                      header.addEventListener('pointerup', stopDrag);
+                      header.addEventListener('pointercancel', stopDrag);
+                      modal.dataset.dragInitialized = 'true';
+                    }
+                  }
 
-                      initDrag();
-                      const observer = new MutationObserver(initDrag);
-                      observer.observe(document.body, { childList: true, subtree: true });
-                    })();
-                    </script>
-                    """, unsafe_allow_javascript=True)
+                  initModal();
+                  const observer = new MutationObserver(initModal);
+                  observer.observe(document.body, { childList: true, subtree: true });
+                })();
+                </script>
+                """.replace('__MAXIMIZED__', 'true' if st.session_state.modal_maximized else 'false')
+                try:
+                    st.html(modal_script, unsafe_allow_javascript=True)
                 except TypeError:
                     pass
 
