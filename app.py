@@ -240,7 +240,7 @@ if st.session_state.chamado_detalhe_id is not None:
                 .st-key-taskbar_tab [data-testid="stHorizontalBlock"]:has(.st-key-btn_restore_tb) {
                     display: grid !important;
                     grid-template-columns: minmax(0, 1fr) 36px 36px !important;
-                    gap: 8px !important;
+                    gap: 4px !important;
                     align-items: center !important;
                     width: 100% !important;
                 }
