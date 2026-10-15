@@ -461,3 +461,32 @@ button[aria-label="Expand sidebar"] {
     height: 0 !important;
     opacity: 0 !important;
 }
+/* =========================================================
+   REMOVER COMPLETAMENTE O REDIMENSIONADOR E A BARRA DA SIDEBAR
+   ========================================================= */
+[data-testid="stSidebarResizer"],
+.stSidebarResizer,
+div[data-testid="stSidebarResizer"],
+[data-testid="stSidebar"]::after {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    opacity: 0 !important;
+}
+
+/* Remove a barra de rolagem visual indesejada e o espaço de arraste na lateral */
+[data-testid="stSidebar"] {
+    border-right: none !important;
+}
+
+[data-testid="stSidebar"] > div {
+    overflow-y: auto;
+    scrollbar-width: none; /* Oculta a barra de rolagem no Firefox */
+}
+
+[data-testid="stSidebar"] > div::-webkit-scrollbar {
+    display: none; /* Oculta a barra de rolagem no Chrome, Safari e Edge */
+}
