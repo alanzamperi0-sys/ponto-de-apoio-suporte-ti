@@ -18,7 +18,6 @@ def conectar_banco():
         cursor_factory=RealDictCursor,
     )
 
-
 def inicializar_banco():
     """Cria a tabela caso ela ainda não exista."""
     with conectar_banco() as conexao:
@@ -119,7 +118,7 @@ PRIORIDADES = ["Baixa", "Média", "Alta"]
 STATUS_CLASSES = {"Aberto": "aberto", "Em andamento": "andamento", "Resolvido": "resolvido"}
 PRIORIDADE_CLASSES = {"Baixa": "baixa", "Média": "media", "Alta": "alta"}
 
-tar(status):
+def contar_status(status):
     return sum(c["status"] == status for c in st.session_state.lista_chamados)
 
 def salvar_status(chamado_id, novo_status):
