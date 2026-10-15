@@ -150,10 +150,11 @@ st.caption("Registre solicitações e acompanhe cada atendimento.")
 
 metricas = [
     ("total", '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3h8v3h3a1.5 1.5 0 0 1 1.5 1.5v12A1.5 1.5 0 0 1 19 21H5a1.5 1.5 0 0 1-1.5-1.5v-12A1.5 1.5 0 0 1 5 6h3V3Z" fill="currentColor"/><path d="M9 3h6v4H9zM8 11h2m4 0h2m-8 4h2m4 0h2" stroke="#fff" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>', "Total de chamados", len(st.session_state.lista_chamados)),
-    ("aberto", '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="currentColor"/><path d="M12 6.5v5.8l4 2.4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>', "Abertos", contar("Aberto")),
-    ("andamento", '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 8A8.8 8.8 0 0 0 5 5.5L3 8.2M3.2 4.5v3.8H7M3.5 16A8.8 8.8 0 0 0 19 18.5l2-2.7m-.2 3.7v-3.8H17" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>', "Em andamento", contar("Em andamento")),
-    ("resolvido", '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="m7 12.2 3.2 3.1L17.5 8" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>', "Resolvidos", contar("Resolvido")),
+    ("aberto", '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="currentColor"/><path d="M12 6.5v5.8l4 2.4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>', "Abertos", contar_status("Aberto")),
+    ("andamento", '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 8A8.8 8.8 0 0 0 5 5.5L3 8.2M3.2 4.5v3.8H7M3.5 16A8.8 8.8 0 0 0 19 18.5l2-2.7m-.2 3.7v-3.8H17" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>', "Em andamento", contar_status("Em andamento")),
+    ("resolvido", '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="m7 12.2 3.2 3.1L17.5 8" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>', "Resolvidos", contar_status("Resolvido")),
 ]
+
 metric_cols = st.columns(4, gap="small")
 for col, (classe, icone, rotulo, valor) in zip(metric_cols, metricas):
     with col:
