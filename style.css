@@ -446,3 +446,18 @@ button[aria-label*="Resize sidebar"],
     min-width: 0 !important;
     max-width: 0 !important;
 }
+/* =========================================================
+   OCULTAR TOTALMENTE OS BOTÕES DE RECOLHER/EXPANDIR (<< / >>)
+   ========================================================= */
+[data-testid="collapsedControl"],
+[data-testid="stSidebarCollapseButton"],
+[data-testid="stSidebarHeader"] button,
+button[aria-label="Collapse sidebar"],
+button[aria-label="Expand sidebar"] {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    opacity: 0 !important;
+}
