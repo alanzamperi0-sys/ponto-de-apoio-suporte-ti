@@ -511,3 +511,12 @@ button[aria-label*="Resize sidebar"] {
 [data-testid="stSidebar"] * {
     cursor: default !important;
 }
+/* =========================================================
+   BLOQUEAR A ROLAGEM (SCROLL) DA BARRA LATERAL
+   ========================================================= */
+[data-testid="stSidebar"],
+[data-testid="stSidebar"] > div {
+    overflow: hidden !important;
+    overflow-y: hidden !important;
+    overflow-x: hidden !important;
+}
