@@ -185,6 +185,16 @@ st.markdown(
         margin-top: 0 !important;
     }
 
+    /* Sidebar aberta: largura fixa; remove a alça de arraste e preserva o botão nativo. */
+    [data-testid="stSidebar"] { resize: none !important; }
+    [data-testid="stSidebar"] [data-testid="stSidebarResizeHandle"],
+    [data-testid="stSidebar"] [data-testid="stSidebarResizeHandle"] *,
+    [data-testid="stSidebar"] > div > [data-testid="stSidebarResizeHandle"] {
+        display: none !important;
+        pointer-events: none !important;
+        width: 0 !important;
+    }
+    [data-testid="stSidebar"] > div { padding: .35rem .75rem 1rem !important; }
     /* Sidebar aberta: largura padrão e sem rolagem visível. */
     html body [data-testid="stSidebar"][aria-expanded="true"] {
         width: 15.5rem !important;
@@ -273,7 +283,7 @@ st.markdown(
     }
     .collapsed-rail-logo {
         left: 13px !important;
-        top: 60px !important;
+        top: 12px !important;
         width: 42px !important;
         height: 42px !important;
         align-items: center !important;
@@ -306,11 +316,26 @@ st.markdown(
     }
 
     /* Put the native expand toggle at the top of the visual rail. */
+    /* The top Streamlit toolbar shares the brand color; its GitHub and other controls stay visible. */
+    [data-testid="stHeader"] {
+        background: linear-gradient(110deg, #173c70 0%, #176ca8 100%) !important;
+        height: 2.75rem !important;
+    }
+    [data-testid="stHeader"] button,
+    [data-testid="stHeader"] button *,
+    [data-testid="stToolbar"],
+    [data-testid="stToolbar"] * {
+        color: #fff !important;
+    }
+    [data-testid="stHeader"] svg {
+        fill: currentColor !important;
+    }
+
     [data-testid="stSidebarCollapsedControl"],
     [data-testid="stExpandSidebarButton"] {
         position: fixed !important;
         top: 10px !important;
-        left: 12px !important;
+        left: 17px !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
@@ -319,11 +344,11 @@ st.markdown(
     }
     [data-testid="stSidebarCollapsedControl"] button,
     [data-testid="stExpandSidebarButton"] button {
-        width: 42px !important;
-        min-width: 42px !important;
-        max-width: 42px !important;
-        height: 38px !important;
-        min-height: 38px !important;
+        width: 34px !important;
+        min-width: 34px !important;
+        max-width: 34px !important;
+        height: 34px !important;
+        min-height: 34px !important;
         padding: 0 !important;
         border-radius: 8px !important;
         background: rgba(255,255,255,.10) !important;
