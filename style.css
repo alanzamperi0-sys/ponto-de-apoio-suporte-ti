@@ -1,65 +1,109 @@
-/* SIDEBAR RECOLHIDA: faixa compacta de 130px */
-[data-testid="stSidebar"][aria-expanded="false"] {
-    width: 130px !important;
-    min-width: 130px !important;
-    max-width: 130px !important;
-    flex: 0 0 130px !important;
-    transform: none !important;
-    margin-left: 0 !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    overflow: hidden !important;
-    background: linear-gradient(
-        180deg, #102b3a 0%, #173746 100%
-    ) !important;
-    transition: width 0.2s ease !important;
+.prioridade-media { color:#a36b00; font-weight:700; }
+.prioridade-baixa { color:#28734a; font-weight:700; }
+.priority-dot { display:inline-block; width:.48rem; height:.48rem; margin-right:.25rem; border-radius:50%; background:currentColor; }
+.ticket-id-badge { display:inline-flex; align-items:center; justify-content:center; box-sizing:border-box; padding:2px 7px; border:1px solid #d7e5f5; border-radius:6px; background:#f7fbff; color:#1769b0; font-size:.74rem; line-height:1.4; font-weight:800; white-space:nowrap; }
+
+/* Status selector */
+[data-testid="stSelectbox"] [data-baseweb="select"] > div { min-height:36px; border:1.5px solid #1677f2; border-radius:999px !important; background:#eff6ff; color:#243d5a; box-shadow:none; transition:background .15s ease,border-color .15s ease; }
+[data-testid="stSelectbox"] [data-baseweb="select"] div,
+[data-testid="stSelectbox"] [data-baseweb="select"] input { font-size:.78rem; font-weight:650; }
+[data-testid="stSelectbox"] [data-baseweb="select"] svg { color:inherit; }
+[data-testid="stSelectbox"] [data-baseweb="select"] > div:focus-within { box-shadow:0 0 0 2px rgba(22,119,242,.13); }
+[data-testid="stWidgetLabel"] p { color:#36516f; font-size:.76rem; font-weight:650; }
+
+/* Form */
+[data-testid="stForm"] { border:0; padding:0; border-radius:0; background:transparent; }
+[data-testid="stTextInput"] input, [data-testid="stTextArea"] textarea { border-radius:8px; color:#243d5a; border:1px solid #dce7f5; background:#f0f5fb; }
+[data-testid="stFormSubmitButton"] button,
+[data-testid="stFormSubmitButton"] button:hover,
+[data-testid="stFormSubmitButton"] button:focus,
+[data-testid="stFormSubmitButton"] button:active { min-height:39px; border:0; border-radius:8px; background:linear-gradient(100deg,#1169c8,#0876df) !important; color:#fff !important; font-weight:750; opacity:1 !important; }
+[data-testid="stFormSubmitButton"] button *,
+[data-testid="stFormSubmitButton"] button p,
+[data-testid="stFormSubmitButton"] button span,
+[data-testid="stFormSubmitButton"] button svg { color:#fff !important; fill:#fff !important; opacity:1 !important; font-weight:750 !important; }
+[data-testid="stFormSubmitButton"] button:disabled,
+[data-testid="stFormSubmitButton"] button:disabled * { color:#fff !important; opacity:1 !important; }
+hr { border-color:#dce7f5; margin:.65rem 0; }
+
+/* Minimized details tab positioning; icon-specific details styles are controlled by app.py. */
+.st-key-taskbar_tab { position:fixed !important; bottom:15px !important; left:270px !important; width:280px !important; z-index:999999 !important; background:#fff !important; box-shadow:0 8px 25px rgba(16,35,63,.25) !important; border-radius:10px !important; border:1.5px solid #1677f2 !important; }
+.st-key-taskbar_tab [data-testid="stVerticalBlock"] { padding:6px 10px !important; }
+
+@media (max-width:1000px) {
+  [data-testid="stMainBlockContainer"] { padding:.35rem .75rem 1rem !important; }
+  .metric-card { gap:.45rem; padding:.55rem; }
+  .metric-icon { width:32px; height:32px; flex-basis:32px; }
+}
+@media (max-width:700px) {
+  .topo { align-items:flex-start; }
+  .topo-legenda { font-size:.68rem; }
+  .sidebar-note { display:none !important; }
 }
 
-/* Preserva o fundo escuro no conteúdo interno */
-[data-testid="stSidebar"][aria-expanded="false"] > div,
-[data-testid="stSidebar"][aria-expanded="false"]
-[data-testid="stSidebarContent"] {
-    background: linear-gradient(
-        180deg, #102b3a 0%, #173746 100%
-    ) !important;
-    width: 130px !important;
-    min-width: 130px !important;
-    max-width: 130px !important;
-    overflow: hidden !important;
-    scrollbar-width: none !important;
-}
 
-/* Mantém somente o ícone do fone */
-[data-testid="stSidebar"][aria-expanded="false"] .sidebar-brand {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    gap: 0 !important;
-    width: 100% !important;
-    padding: 3.5rem 0.25rem 0.5rem !important;
-    box-sizing: border-box !important;
+/* Final override: full-width top toolbar and compact brand strip */
+[data-testid="stHeader"] {
+  position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important;
+  width: 100vw !important; height: 3.25rem !important; min-height: 3.25rem !important;
+  background: linear-gradient(110deg,#173c70 0%,#176ca8 100%) !important;
+  z-index: 1000000 !important;
 }
-
-[data-testid="stSidebar"][aria-expanded="false"]
-.sidebar-brand > div:not(.sidebar-icon) {
-    display: none !important;
+[data-testid="stHeader"]::before {
+  content:"" !important; position:absolute !important; inset:0 !important;
+  background:linear-gradient(110deg,#173c70 0%,#176ca8 100%) !important; z-index:-1 !important;
 }
+[data-testid="stToolbar"], [data-testid="stHeader"] button,
+[data-testid="stHeader"] button *, [data-testid="stToolbar"] * { color:#fff !important; }
+body .stApp .topo { margin-top:3.25rem !important; min-height:3.25rem !important; height:3.25rem !important; }
+body .stApp .topo-marca { display:flex !important; align-items:center !important; gap:.65rem !important; }
+body .stApp .topo-icone { display:flex !important; align-items:center !important; justify-content:center !important; margin:0 !important; }
+[data-testid="stSidebarResizeHandle"], [data-testid="stSidebar"] [data-testid*="ResizeHandle"] { display:none !important; pointer-events:none !important; width:0 !important; }
 
-[data-testid="stSidebar"][aria-expanded="false"] .sidebar-section,
-[data-testid="stSidebar"][aria-expanded="false"] .sidebar-nav-active,
-[data-testid="stSidebar"][aria-expanded="false"] .sidebar-note {
-    display: none !important;
+
+/* AJUSTE PONTUAL: sidebar compacta com o ícone de suporte visível.
+   Mantém o restante do CSS restaurado sem alterar o cabeçalho ou o conteúdo central. */
+section[data-testid="stSidebar"][aria-expanded="true"] {
+  width: 15.5rem !important; min-width: 15.5rem !important; max-width: 15.5rem !important; resize: none !important;
 }
-
-/* Posiciona o botão nativo dentro da faixa compacta */
-div[data-testid="stSidebarCollapsedControl"] {
-    position: fixed !important;
-    top: 24px !important;
-    left: 78px !important;
-    z-index: 1002 !important;
+[data-testid="stSidebarResizeHandle"],
+[data-testid="stSidebar"] [data-testid*="ResizeHandle"],
+[data-testid="stSidebar"] [style*="cursor: col-resize"],
+[data-testid="stSidebar"] [style*="cursor: ew-resize"] {
+  display: none !important; pointer-events: none !important; width: 0 !important;
 }
-
-/* Oculta a barra de rolagem da faixa */
-[data-testid="stSidebar"][aria-expanded="false"]::-webkit-scrollbar {
-    display: none !important;
+section[data-testid="stSidebar"][aria-expanded="false"] {
+  width: 4.25rem !important; min-width: 4.25rem !important; max-width: 4.25rem !important;
+  flex: 0 0 4.25rem !important; transform: none !important; translate: none !important;
+  overflow: visible !important; visibility: visible !important;
+}
+section[data-testid="stSidebar"][aria-expanded="false"] > div {
+  width: 4.25rem !important; min-width: 4.25rem !important; max-width: 4.25rem !important;
+  padding: 3.4rem .45rem .75rem !important; overflow: hidden !important;
+}
+section[data-testid="stSidebar"][aria-expanded="false"] .sidebar-brand {
+  display: flex !important; justify-content: center !important; align-items: center !important;
+  width: 3rem !important; margin: .35rem auto 0 !important; padding: 0 !important;
+}
+section[data-testid="stSidebar"][aria-expanded="false"] .sidebar-icon {
+  display: flex !important; width: 2.35rem !important; height: 2.35rem !important;
+  flex: 0 0 2.35rem !important; align-items: center !important; justify-content: center !important; margin: 0 !important;
+}
+section[data-testid="stSidebar"][aria-expanded="false"] .sidebar-title,
+section[data-testid="stSidebar"][aria-expanded="false"] .sidebar-subtitle,
+section[data-testid="stSidebar"][aria-expanded="false"] .sidebar-section,
+section[data-testid="stSidebar"][aria-expanded="false"] .sidebar-nav-active,
+section[data-testid="stSidebar"][aria-expanded="false"] .sidebar-note { display: none !important; }
+[data-testid="stSidebarCollapsedControl"] {
+  position: fixed !important; top: .45rem !important; left: .45rem !important;
+  width: 3.25rem !important; height: 2.5rem !important; display: flex !important;
+  align-items: center !important; justify-content: center !important; z-index: 999999 !important;
+}
+[data-testid="stSidebarCollapsedControl"] button {
+  width: 2.35rem !important; min-width: 2.35rem !important; height: 2.25rem !important;
+  min-height: 2.25rem !important; padding: 0 !important; border-radius: 7px !important;
+  border: 1px solid rgba(255,255,255,.22) !important; background: rgba(255,255,255,.10) !important; color: #eef6ff !important;
+}
+body:has(section[data-testid="stSidebar"][aria-expanded="false"]) [data-testid="stMain"] {
+  margin-left: 4.25rem !important; width: calc(100% - 4.25rem) !important; max-width: calc(100% - 4.25rem) !important;
 }
