@@ -18,6 +18,7 @@ def conectar_banco():
         cursor_factory=RealDictCursor,
     )
 
+
 def inicializar_banco():
     """Cria a tabela caso ela ainda não exista."""
     with conectar_banco() as conexao:
@@ -35,21 +36,6 @@ def inicializar_banco():
                     data TEXT NOT NULL
                 )
                 """
-            )
-        quantidade = conexao.execute("SELECT COUNT(*) FROM chamados").fetchone()[0]
-        if quantidade == 0:
-            exemplos = [
-                ("Computador não liga", "Lucas", "Computador",
-                 "O equipamento não está ligando, apenas o led acende.",
-                 "Aberto", "Baixa", "10/10/2026 14:32"),
-                ("Impressora não reconhece", "Joao", "Impressora",
-                 "A impressora não está sendo reconhecida pelo sistema.",
-                 "Em andamento", "Média", "13/10/2026 13:30"),
-            ]
-            conexao.executemany(
-                """INSERT INTO chamados
-                   (titulo, solicitante, categoria, descricao, status, prioridade, data)
-                   VALUES (?, ?, ?, ?, ?, ?, ?)""", exemplos
             )
 
 def listar_chamados():
