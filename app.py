@@ -5,7 +5,6 @@ from datetime import datetime
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from psycopg2.pool import ThreadedConnectionPool
-from time import perf_counter
 
 
 st.set_page_config(page_title="Ponto de Apoio | Suporte de TI", page_icon="🛠️", layout="wide")
@@ -65,44 +64,17 @@ def inicializar_banco():
 
 
 def listar_chamados():
-    inicio = perf_counter()
-    conexao = None
-
+    conexao = conectar_banco()
     try:
-        inicio_conexao = perf_counter()
-        conexao = conectar_banco()
-        fim_conexao = perf_counter()
-
-        inicio_consulta = perf_counter()
-
         with conexao.cursor() as cursor:
-            cursor.execute(
-                "SELECT * FROM public.chamados ORDER BY id"
-            )
+            cursor.execute("SELECT * FROM public.chamados ORDER BY id")
             linhas = cursor.fetchall()
-
-        fim_consulta = perf_counter()
-        chamados = [dict(linha) for linha in linhas]
-        fim_total = perf_counter()
-
-        diagnostico = (
-            f"Pool: {fim_conexao - inicio_conexao:.3f}s | "
-            f"Consulta SQL: {fim_consulta - inicio_consulta:.3f}s | "
-            f"Total da leitura: {fim_total - inicio:.3f}s"
-        )
-        st.session_state["diagnostico_banco"] = diagnostico
-        print("DIAGNOSTICO BANCO |", diagnostico)
-
-        return chamados
-
+            return [dict(linha) for linha in linhas]
     except Exception:
-        if conexao is not None:
-            conexao.rollback()
+        conexao.rollback()
         raise
-
     finally:
-        if conexao is not None:
-            devolver_conexao(conexao)
+        devolver_conexao(conexao)
 
 def criar_chamado(
     titulo, solicitante, categoria, descricao, prioridade
@@ -159,7 +131,6 @@ def atualizar_status(chamado_id, novo_status):
         devolver_conexao(conexao)
 
 
-inicio_execucao_app = perf_counter()
 inicializar_banco()
 
 # Busca os chamados no banco apenas no primeiro carregamento desta sessão.
@@ -233,10 +204,6 @@ st.markdown(
 
 st.title("Painel de chamados")
 st.caption("Registre solicitações e acompanhe cada atendimento.")
-st.caption(
-    "Diagnóstico temporário: "
-    + st.session_state.get("diagnostico_banco", "Aguardando medição")
-)
 
 metricas = [
     ("total", '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3h8v3h3a1.5 1.5 0 0 1 1.5 1.5v12A1.5 1.5 0 0 1 19 21H5a1.5 1.5 0 0 1-1.5-1.5v-12A1.5 1.5 0 0 1 5 6h3V3Z" fill="currentColor"/><path d="M9 3h6v4H9zM8 11h2m4 0h2m-8 4h2m4 0h2" stroke="#fff" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>', "Total de chamados", len(st.session_state.lista_chamados)),
@@ -278,17 +245,23 @@ if st.session_state.chamado_detalhe_id is not None:
                         st.session_state.modal_maximized = False
                         st.rerun()
         else:
-            # Mantém a janela dentro da tela e permite rolar todo o conteúdo
-            # quando o título ou a descrição do chamado forem longos.
+            # A janela respeita a tela; o conteúdo longo rola em uma área interna.
             max_css = """
             .st-key-modal_container {
+                position: fixed !important;
+                top: 7vh !important;
+                left: 50% !important;
+                right: auto !important;
+                bottom: auto !important;
+                transform: translateX(-50%) !important;
+                width: min(540px, 92vw) !important;
+                max-width: 92vw !important;
                 height: auto !important;
-                max-height: calc(100dvh - 20px) !important;
-                overflow-y: auto !important;
-                overflow-x: hidden !important;
-                overscroll-behavior: contain !important;
+                max-height: calc(100dvh - 16px) !important;
+                overflow: hidden !important;
+                resize: both !important;
                 box-sizing: border-box !important;
-                scrollbar-width: thin;
+                z-index: 999999 !important;
             }
 
             .st-key-modal_container [data-testid="stMarkdownContainer"] {
@@ -296,14 +269,22 @@ if st.session_state.chamado_detalhe_id is not None:
                 word-break: normal !important;
             }
 
-            .st-key-modal_container [data-testid="stHorizontalBlock"]:has(.st-key-btn_min_modal) {
-                position: sticky !important;
-                top: 0 !important;
-                z-index: 1000 !important;
-                background: var(--background-color, #ffffff) !important;
-                padding-top: 4px !important;
-                padding-bottom: 6px !important;
-                border-bottom: 1px solid rgba(128, 128, 128, 0.25);
+            .st-key-modal_body {
+                max-height: calc(100dvh - 170px) !important;
+                overflow-y: auto !important;
+                overflow-x: hidden !important;
+                overscroll-behavior: contain !important;
+                scrollbar-width: thin !important;
+                min-height: 0 !important;
+                box-sizing: border-box !important;
+                padding-right: 6px !important;
+            }
+
+            .st-key-modal_body > div,
+            .st-key-modal_body [data-testid="stVerticalBlock"] {
+                min-height: 0 !important;
+                overflow: visible !important;
+                box-sizing: border-box !important;
             }
             """
 
@@ -313,12 +294,16 @@ if st.session_state.chamado_detalhe_id is not None:
                     top: 10px !important;
                     left: 10px !important;
                     right: 10px !important;
-                    bottom: auto !important;
+                    bottom: 10px !important;
                     transform: none !important;
                     width: calc(100vw - 20px) !important;
                     height: calc(100dvh - 20px) !important;
                     max-width: none !important;
                     max-height: calc(100dvh - 20px) !important;
+                    resize: none !important;
+                }
+                .st-key-modal_body {
+                    max-height: calc(100dvh - 105px) !important;
                 }
                 """
             st.markdown(f"<style>{max_css}</style>", unsafe_allow_html=True)
@@ -367,13 +352,13 @@ if st.session_state.chamado_detalhe_id is not None:
                           startY = e.clientY;
 
                           const rect = modal.getBoundingClientRect();
-                          modal.style.transform = 'none';
-                          modal.style.position = 'fixed';
-                          modal.style.left = rect.left + 'px';
-                          modal.style.top = rect.top + 'px';
-                          modal.style.margin = '0';
-                          modal.style.bottom = 'auto';
-                          modal.style.right = 'auto';
+                          modal.style.setProperty('transform', 'none', 'important');
+                          modal.style.setProperty('position', 'fixed', 'important');
+                          modal.style.setProperty('left', rect.left + 'px', 'important');
+                          modal.style.setProperty('top', rect.top + 'px', 'important');
+                          modal.style.setProperty('margin', '0', 'important');
+                          modal.style.setProperty('bottom', 'auto', 'important');
+                          modal.style.setProperty('right', 'auto', 'important');
 
                           initialLeft = rect.left;
                           initialTop = rect.top;
@@ -386,8 +371,8 @@ if st.session_state.chamado_detalhe_id is not None:
                           if (!isDragging) return;
                           const dx = e.clientX - startX;
                           const dy = e.clientY - startY;
-                          modal.style.left = (initialLeft + dx) + 'px';
-                          modal.style.top = (initialTop + dy) + 'px';
+                          modal.style.setProperty('left', (initialLeft + dx) + 'px', 'important');
+                          modal.style.setProperty('top', (initialTop + dy) + 'px', 'important');
                         });
 
                         function stopDrag(e) {
@@ -409,41 +394,42 @@ if st.session_state.chamado_detalhe_id is not None:
                 except TypeError:
                     pass
 
-                st.divider()
+                with st.container(key="modal_body"):
+                    st.divider()
 
-                status_css = {
-                    "Aberto": {"cor": "#f97316", "fundo": "#fff7ed"},
-                    "Em andamento": {"cor": "#1677f2", "fundo": "#eff6ff"},
-                    "Resolvido": {"cor": "#16834a", "fundo": "#effcf3"},
-                }
-                config_modal = status_css.get(chamado_atual["status"], {"cor": "#1677f2", "fundo": "#eff6ff"})
+                    status_css = {
+                        "Aberto": {"cor": "#f97316", "fundo": "#fff7ed"},
+                        "Em andamento": {"cor": "#1677f2", "fundo": "#eff6ff"},
+                        "Resolvido": {"cor": "#16834a", "fundo": "#effcf3"},
+                    }
+                    config_modal = status_css.get(chamado_atual["status"], {"cor": "#1677f2", "fundo": "#eff6ff"})
                 
-                st.markdown(
-                    f"""
-                    <div style="display: inline-flex; align-items: center; gap: 8px; border: 1.5px solid {config_modal['cor']}; 
-                         border-radius: 999px; background-color: {config_modal['fundo']}; padding: 4px 14px; margin-bottom: 12px;">
-                        <span style="width: 8px; height: 8px; background-color: {config_modal['cor']}; border-radius: 50%; display: inline-block;"></span>
-                        <span style="color: {config_modal['cor']}; font-weight: 700; font-size: 0.85rem; font-family: sans-serif;">{chamado_atual['status']}</span>
-                    </div>
-                    """, 
-                    unsafe_allow_html=True
-                )
+                    st.markdown(
+                        f"""
+                        <div style="display: inline-flex; align-items: center; gap: 8px; border: 1.5px solid {config_modal['cor']}; 
+                             border-radius: 999px; background-color: {config_modal['fundo']}; padding: 4px 14px; margin-bottom: 12px;">
+                            <span style="width: 8px; height: 8px; background-color: {config_modal['cor']}; border-radius: 50%; display: inline-block;"></span>
+                            <span style="color: {config_modal['cor']}; font-weight: 700; font-size: 0.85rem; font-family: sans-serif;">{chamado_atual['status']}</span>
+                        </div>
+                        """, 
+                        unsafe_allow_html=True
+                    )
                 
-                st.markdown(f"**TÍTULO DO CHAMADO**\n\n{escape(chamado_atual['titulo'])}")
-                st.divider()
-                st.markdown(f"**DESCRIÇÃO COMPLETA**\n\n{escape(chamado_atual['descricao'])}")
-                st.divider()
+                    st.markdown(f"**TÍTULO DO CHAMADO**\n\n{escape(chamado_atual['titulo'])}")
+                    st.divider()
+                    st.markdown(f"**DESCRIÇÃO COMPLETA**\n\n{escape(chamado_atual['descricao'])}")
+                    st.divider()
                 
-                c1, c2 = st.columns(2)
-                with c1:
-                    st.markdown(f"👤 **Solicitante**\n\n{escape(chamado_atual['solicitante'])}")
-                    st.markdown(f"📅 **Data de abertura**\n\n{escape(chamado_atual.get('data', '—'))}")
-                with c2:
-                    st.markdown(f"▦ **Categoria**\n\n{escape(chamado_atual['categoria'])}")
-                    st.markdown(f"⚡ **Prioridade**\n\n{escape(chamado_atual['prioridade'])}")
+                    c1, c2 = st.columns(2)
+                    with c1:
+                        st.markdown(f"👤 **Solicitante**\n\n{escape(chamado_atual['solicitante'])}")
+                        st.markdown(f"📅 **Data de abertura**\n\n{escape(chamado_atual.get('data', '—'))}")
+                    with c2:
+                        st.markdown(f"▦ **Categoria**\n\n{escape(chamado_atual['categoria'])}")
+                        st.markdown(f"⚡ **Prioridade**\n\n{escape(chamado_atual['prioridade'])}")
                     
-                st.divider()
-                st.caption("Alterações de status e outras ações podem ser feitas diretamente na listagem principal.")
+                    st.divider()
+                    st.caption("Alterações de status e outras ações podem ser feitas diretamente na listagem principal.")
     else:
         st.session_state.chamado_detalhe_id = None
 
@@ -636,6 +622,3 @@ with col_formulario:
                 st.success("Chamado registrado com sucesso!")
                 st.rerun()
 
-# Diagnóstico temporário: tempo gasto pelo código Python nesta execução.
-tempo_execucao_app = perf_counter() - inicio_execucao_app
-st.caption(f"Diagnóstico da execução Python: {tempo_execucao_app:.3f}s")
