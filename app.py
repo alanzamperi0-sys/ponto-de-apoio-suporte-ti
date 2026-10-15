@@ -159,6 +159,7 @@ def atualizar_status(chamado_id, novo_status):
         devolver_conexao(conexao)
 
 
+inicio_execucao_app = perf_counter()
 inicializar_banco()
 st.session_state.lista_chamados = listar_chamados()
 st.session_state.proximo_id = max((c["id"] for c in st.session_state.lista_chamados), default=0) + 1
@@ -591,3 +592,7 @@ with col_formulario:
                 )
                 st.success("Chamado registrado com sucesso!")
                 st.rerun()
+
+# Diagnóstico temporário: tempo gasto pelo código Python nesta execução.
+tempo_execucao_app = perf_counter() - inicio_execucao_app
+st.caption(f"Diagnóstico da execução Python: {tempo_execucao_app:.3f}s")
