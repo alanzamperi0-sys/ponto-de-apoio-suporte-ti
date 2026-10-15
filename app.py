@@ -185,178 +185,6 @@ st.markdown(
         margin-top: 0 !important;
     }
 
-
-    /* ===== Correção final de cabeçalho e menu lateral ===== */
-    [data-testid="stHeader"] {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        width: 100vw !important;
-        height: 3.25rem !important;
-        min-height: 3.25rem !important;
-        background: linear-gradient(110deg, #173c70 0%, #176ca8 100%) !important;
-        z-index: 1000000 !important;
-        box-shadow: 0 2px 8px rgba(10, 35, 70, .12) !important;
-    }
-    [data-testid="stHeader"]::before {
-        content: "" !important;
-        position: absolute !important;
-        inset: 0 !important;
-        background: linear-gradient(110deg, #173c70 0%, #176ca8 100%) !important;
-        z-index: -1 !important;
-    }
-    [data-testid="stToolbar"],
-    [data-testid="stHeader"] button,
-    [data-testid="stHeader"] button *,
-    [data-testid="stToolbar"] * {
-        color: #fff !important;
-    }
-    [data-testid="stHeader"] svg {
-        fill: currentColor !important;
-        color: #fff !important;
-    }
-
-    /* Place the app's own brand strip immediately below the toolbar and align its contents. */
-    body .stApp .topo {
-        margin-top: 3.25rem !important;
-        min-height: 3.25rem !important;
-        height: 3.25rem !important;
-        box-sizing: border-box !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        padding: .45rem 1rem !important;
-        border-radius: 0 0 12px 12px !important;
-    }
-    body .stApp .topo-marca {
-        display: flex !important;
-        align-items: center !important;
-        gap: .65rem !important;
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-    body .stApp .topo-icone {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        flex: 0 0 2rem !important;
-        width: 2rem !important;
-        height: 2rem !important;
-        margin: 0 !important;
-    }
-    body .stApp .marca,
-    body .stApp .submarca {
-        margin: 0 !important;
-        line-height: 1.15 !important;
-    }
-
-    /* Use Streamlit's actual collapse/expand buttons; remove the resize cursor/handle. */
-    [data-testid="stSidebar"] {
-        resize: none !important;
-        cursor: default !important;
-    }
-    [data-testid="stSidebarResizeHandle"],
-    [data-testid="stSidebarResizeHandle"] *,
-    [data-testid="stSidebar"] [data-testid*="ResizeHandle"],
-    [data-testid="stSidebar"] [data-testid*="resizeHandle"],
-    [data-testid="stSidebar"] [style*="cursor: col-resize"],
-    [data-testid="stSidebar"] [style*="cursor: ew-resize"] {
-        display: none !important;
-        pointer-events: none !important;
-        width: 0 !important;
-        min-width: 0 !important;
-        cursor: default !important;
-    }
-    [data-testid="stSidebar"] [data-testid="stSidebarCollapseButton"],
-    [data-testid="stSidebarCollapsedControl"],
-    [data-testid="stExpandSidebarButton"] {
-        display: flex !important;
-        position: fixed !important;
-        top: .45rem !important;
-        left: .6rem !important;
-        width: 2.2rem !important;
-        height: 2.2rem !important;
-        align-items: center !important;
-        justify-content: center !important;
-        z-index: 1000005 !important;
-    }
-    [data-testid="stSidebar"] [data-testid="stSidebarCollapseButton"] button,
-    [data-testid="stSidebarCollapsedControl"] button,
-    [data-testid="stExpandSidebarButton"] button {
-        width: 2.1rem !important;
-        min-width: 2.1rem !important;
-        height: 2.1rem !important;
-        min-height: 2.1rem !important;
-        padding: 0 !important;
-        border-radius: 7px !important;
-        border: 1px solid rgba(255,255,255,.28) !important;
-        background: rgba(255,255,255,.12) !important;
-        color: #fff !important;
-    }
-    [data-testid="stSidebar"] [data-testid="stSidebarCollapseButton"] button svg,
-    [data-testid="stSidebarCollapsedControl"] button svg,
-    [data-testid="stExpandSidebarButton"] button svg {
-        color: #fff !important;
-        fill: #fff !important;
-    }
-
-    /* Sidebar open: keep its brand below the top toggle; collapsed: show only the support mark. */
-    html body [data-testid="stSidebar"][aria-expanded="true"] {
-        width: 15.5rem !important;
-        min-width: 15.5rem !important;
-        max-width: 15.5rem !important;
-    }
-    html body [data-testid="stSidebar"][aria-expanded="true"] > div {
-        padding-top: 3.35rem !important;
-    }
-    html body [data-testid="stSidebar"][aria-expanded="false"] {
-        width: 4.25rem !important;
-        min-width: 4.25rem !important;
-        max-width: 4.25rem !important;
-        transform: translateX(0) !important;
-        translate: 0 0 !important;
-        overflow: hidden !important;
-    }
-    html body [data-testid="stSidebar"][aria-expanded="false"] .sidebar-brand {
-        display: flex !important;
-        width: 2.6rem !important;
-        height: 2.6rem !important;
-        margin: 0 auto !important;
-        padding: 0 !important;
-        align-items: center !important;
-        justify-content: center !important;
-    }
-    html body [data-testid="stSidebar"][aria-expanded="false"] .sidebar-brand > div:not(.sidebar-icon),
-    html body [data-testid="stSidebar"][aria-expanded="false"] .sidebar-section,
-    html body [data-testid="stSidebar"][aria-expanded="false"] .sidebar-nav-active,
-    html body [data-testid="stSidebar"][aria-expanded="false"] .sidebar-note {
-        display: none !important;
-    }
-    html body [data-testid="stSidebar"][aria-expanded="false"] .sidebar-icon {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        width: 2.35rem !important;
-        height: 2.35rem !important;
-        margin: 0 !important;
-    }
-    body:has([data-testid="stSidebar"][aria-expanded="false"]) [data-testid="stMain"] {
-        margin-left: 4.25rem !important;
-        width: calc(100% - 4.25rem) !important;
-        max-width: calc(100% - 4.25rem) !important;
-    }
-
-    /* Sidebar aberta: largura fixa; remove a alça de arraste e preserva o botão nativo. */
-    [data-testid="stSidebar"] { resize: none !important; }
-    [data-testid="stSidebar"] [data-testid="stSidebarResizeHandle"],
-    [data-testid="stSidebar"] [data-testid="stSidebarResizeHandle"] *,
-    [data-testid="stSidebar"] > div > [data-testid="stSidebarResizeHandle"] {
-        display: none !important;
-        pointer-events: none !important;
-        width: 0 !important;
-    }
-    [data-testid="stSidebar"] > div { padding: .35rem .75rem 1rem !important; }
     /* Sidebar aberta: largura padrão e sem rolagem visível. */
     html body [data-testid="stSidebar"][aria-expanded="true"] {
         width: 15.5rem !important;
@@ -445,7 +273,7 @@ st.markdown(
     }
     .collapsed-rail-logo {
         left: 13px !important;
-        top: 12px !important;
+        top: 60px !important;
         width: 42px !important;
         height: 42px !important;
         align-items: center !important;
@@ -478,26 +306,11 @@ st.markdown(
     }
 
     /* Put the native expand toggle at the top of the visual rail. */
-    /* The top Streamlit toolbar shares the brand color; its GitHub and other controls stay visible. */
-    [data-testid="stHeader"] {
-        background: linear-gradient(110deg, #173c70 0%, #176ca8 100%) !important;
-        height: 2.75rem !important;
-    }
-    [data-testid="stHeader"] button,
-    [data-testid="stHeader"] button *,
-    [data-testid="stToolbar"],
-    [data-testid="stToolbar"] * {
-        color: #fff !important;
-    }
-    [data-testid="stHeader"] svg {
-        fill: currentColor !important;
-    }
-
     [data-testid="stSidebarCollapsedControl"],
     [data-testid="stExpandSidebarButton"] {
         position: fixed !important;
         top: 10px !important;
-        left: 17px !important;
+        left: 12px !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
@@ -506,11 +319,11 @@ st.markdown(
     }
     [data-testid="stSidebarCollapsedControl"] button,
     [data-testid="stExpandSidebarButton"] button {
-        width: 34px !important;
-        min-width: 34px !important;
-        max-width: 34px !important;
-        height: 34px !important;
-        min-height: 34px !important;
+        width: 42px !important;
+        min-width: 42px !important;
+        max-width: 42px !important;
+        height: 38px !important;
+        min-height: 38px !important;
         padding: 0 !important;
         border-radius: 8px !important;
         background: rgba(255,255,255,.10) !important;
@@ -599,6 +412,162 @@ st.markdown(
         body:has([data-testid="stSidebar"][aria-expanded="false"]) .st-key-taskbar_tab {
             left: 72px !important;
         }
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+
+
+# Final sidebar/header corrections (v9)
+st.markdown(
+    r"""
+    <style>
+    /* Remove Streamlit's thin top toolbar so the application's blue banner fills the marked top region. */
+    [data-testid="stHeader"],
+    [data-testid="stToolbar"],
+    [data-testid="stDecoration"] {
+        display: none !important;
+        height: 0 !important;
+        min-height: 0 !important;
+        max-height: 0 !important;
+    }
+    body .stApp [data-testid="stMainBlockContainer"] {
+        padding-top: .35rem !important;
+        margin-top: 0 !important;
+    }
+    body .stApp .topo {
+        height: 100px !important;
+        min-height: 100px !important;
+        max-height: 100px !important;
+        box-sizing: border-box !important;
+        margin-top: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    /* Sidebar uses only the native collapse/expand button. Disable all sidebar resize handles. */
+    section[data-testid="stSidebar"] {
+        resize: none !important;
+        overflow-x: hidden !important;
+        overflow-y: hidden !important;
+        scrollbar-width: none !important;
+    }
+    section[data-testid="stSidebar"]::before,
+    section[data-testid="stSidebar"]::after,
+    [data-testid="stSidebarResizer"],
+    [data-testid="stSidebarResizeHandle"],
+    [data-testid="stSidebarResizerHandle"],
+    [data-testid="stSidebarResizeControl"],
+    [aria-label="Resize sidebar"],
+    [aria-label="Resize Sidebar"],
+    [aria-label="Resize side bar"],
+    [class*="stSidebarResizer"],
+    [class*="sidebar-resizer"],
+    [class*="SidebarResizeHandle"] {
+        display: none !important;
+        width: 0 !important;
+        min-width: 0 !important;
+        max-width: 0 !important;
+        pointer-events: none !important;
+    }
+
+    /* Expanded state: place the genuine Streamlit collapse control in the red square at upper-right. */
+    section[data-testid="stSidebar"][aria-expanded="true"] [data-testid="stSidebarHeader"] {
+        position: relative !important;
+        min-height: 48px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    section[data-testid="stSidebar"][aria-expanded="true"] [data-testid="stSidebarHeader"] [data-testid="stSidebarCollapseButton"],
+    section[data-testid="stSidebar"][aria-expanded="true"] [data-testid="stSidebarHeader"] button[aria-label*="Collapse"],
+    section[data-testid="stSidebar"][aria-expanded="true"] [data-testid="stSidebarHeader"] button[aria-label*="Close sidebar"] {
+        position: absolute !important;
+        top: 8px !important;
+        right: 8px !important;
+        left: auto !important;
+        bottom: auto !important;
+        z-index: 1000006 !important;
+        margin: 0 !important;
+        pointer-events: auto !important;
+    }
+    section[data-testid="stSidebar"][aria-expanded="true"] [data-testid="stSidebarHeader"] button {
+        min-width: 38px !important;
+        width: 38px !important;
+        max-width: 38px !important;
+        min-height: 38px !important;
+        height: 38px !important;
+        max-height: 38px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 0 !important;
+        border-radius: 8px !important;
+        background: rgba(255,255,255,.10) !important;
+        border: 1px solid rgba(255,255,255,.22) !important;
+        color: #eef6ff !important;
+        cursor: pointer !important;
+        pointer-events: auto !important;
+    }
+    section[data-testid="stSidebar"][aria-expanded="true"] [data-testid="stSidebarHeader"] button svg {
+        width: 18px !important;
+        height: 18px !important;
+        color: #eef6ff !important;
+        fill: #eef6ff !important;
+        pointer-events: none !important;
+    }
+
+    /* Collapsed state: keep the native expand control clickable and above the decorative rail. */
+    [data-testid="stSidebarCollapsedControl"],
+    [data-testid="stExpandSidebarButton"] {
+        position: fixed !important;
+        top: 10px !important;
+        left: 12px !important;
+        right: auto !important;
+        bottom: auto !important;
+        z-index: 1000008 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        pointer-events: auto !important;
+    }
+    [data-testid="stSidebarCollapsedControl"] button,
+    [data-testid="stExpandSidebarButton"] button,
+    [data-testid="stSidebarCollapsedControl"][role="button"],
+    [data-testid="stExpandSidebarButton"][role="button"] {
+        width: 42px !important;
+        min-width: 42px !important;
+        max-width: 42px !important;
+        height: 38px !important;
+        min-height: 38px !important;
+        max-height: 38px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        pointer-events: auto !important;
+        cursor: pointer !important;
+        border-radius: 8px !important;
+        background: rgba(255,255,255,.10) !important;
+        border: 1px solid rgba(255,255,255,.22) !important;
+        color: #eef6ff !important;
+    }
+    [data-testid="stSidebarCollapsedControl"] button svg,
+    [data-testid="stExpandSidebarButton"] button svg,
+    [data-testid="stSidebarCollapsedControl"] svg,
+    [data-testid="stExpandSidebarButton"] svg {
+        width: 18px !important;
+        height: 18px !important;
+        color: #eef6ff !important;
+        fill: #eef6ff !important;
+        pointer-events: none !important;
+    }
+
+    /* Ensure decorative fallback rail never intercepts clicks on the real Streamlit toggle. */
+    .collapsed-rail-shell, .collapsed-rail-logo {
+        pointer-events: none !important;
     }
     </style>
     """,
