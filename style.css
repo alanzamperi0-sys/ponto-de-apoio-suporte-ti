@@ -13,7 +13,7 @@ section[data-testid="stSidebar"][aria-expanded="true"] {
   width:15.5rem !important; min-width:15.5rem !important; max-width:15.5rem !important;
   background:linear-gradient(180deg,#102b3a 0%,#173746 100%); border-right:1px solid rgba(255,255,255,.06);
 }
-section[data-testid="stSidebar"] > div { padding:1.15rem .75rem; }
+section[data-testid="stSidebar"] > div { padding:.35rem .75rem 1rem; }
 section[data-testid="stSidebar"] * { color:#eef6ff; }
 .sidebar-brand { display:flex; align-items:center; gap:.7rem; padding:.55rem .45rem 2.3rem; }
 .sidebar-icon { display:flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:12px; background:#f1f7fb; color:#15394c !important; font-size:1.3rem; flex-shrink:0; }
@@ -32,7 +32,14 @@ section[data-testid="stSidebar"] * { color:#eef6ff; }
 .marca { font-size:1.02rem; font-weight:800; }
 .submarca { margin-top:.1rem; font-size:.61rem; letter-spacing:.15em; font-weight:700; opacity:.85; }
 .topo-legenda { font-size:.78rem; font-weight:650; opacity:.95; }
-[data-testid="stHeader"] { background:transparent !important; }
+[data-testid="stHeader"] {
+  background:linear-gradient(110deg,#173c70 0%,#176ca8 100%) !important;
+}
+[data-testid="stHeader"] button,
+[data-testid="stHeader"] button *,
+[data-testid="stToolbar"],
+[data-testid="stToolbar"] * { color:#fff !important; }
+[data-testid="stHeader"] svg { fill:currentColor !important; }
 
 /* Metrics */
 .metric-card { display:flex; align-items:center; gap:.75rem; min-height:78px; padding:.7rem .85rem; border:1px solid #d4e4f6; border-radius:10px; background:linear-gradient(135deg,#fff 0%,#f7fbff 100%); box-sizing:border-box; }
