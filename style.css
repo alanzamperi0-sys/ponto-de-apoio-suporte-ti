@@ -9,12 +9,12 @@ p, [data-testid="stCaptionContainer"] { color:var(--muted); }
 [data-testid="stHorizontalBlock"] { gap:.65rem; }
 
 /* Sidebar expanded. The collapsed rail state is controlled by app.py and its aria-expanded selector. */
-section[data-testid="stSidebar"][aria-expanded="true"] {
+[data-testid="stSidebar"][aria-expanded="true"] {
   width:15.5rem !important; min-width:15.5rem !important; max-width:15.5rem !important;
   background:linear-gradient(180deg,#102b3a 0%,#173746 100%); border-right:1px solid rgba(255,255,255,.06);
 }
-section[data-testid="stSidebar"] > div { padding:1.15rem .75rem; }
-section[data-testid="stSidebar"] * { color:#eef6ff; }
+[data-testid="stSidebar"] > div { padding:1.15rem .75rem; }
+[data-testid="stSidebar"] * { color:#eef6ff; }
 .sidebar-brand { display:flex; align-items:center; gap:.7rem; padding:.55rem .45rem 2.3rem; }
 .sidebar-icon { display:flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:12px; background:#f1f7fb; color:#15394c !important; font-size:1.3rem; flex-shrink:0; }
 .sidebar-title { font-size:1rem; font-weight:800; line-height:1.3; }
@@ -108,10 +108,38 @@ body .stApp .topo {
   height:100px !important; min-height:100px !important; max-height:100px !important;
   box-sizing:border-box !important; margin-top:0 !important; display:flex !important; align-items:center !important;
 }
-section[data-testid="stSidebar"] { resize:none !important; overflow-x:hidden !important; overflow-y:hidden !important; scrollbar-width:none !important; }
-section[data-testid="stSidebar"]::before, section[data-testid="stSidebar"]::after,
+[data-testid="stSidebar"] { resize:none !important; overflow-x:hidden !important; overflow-y:hidden !important; scrollbar-width:none !important; }
+[data-testid="stSidebar"]::before, [data-testid="stSidebar"]::after,
 [data-testid="stSidebarResizer"], [data-testid="stSidebarResizeHandle"], [data-testid="stSidebarResizerHandle"],
 [data-testid="stSidebarResizeControl"], [aria-label="Resize sidebar"], [aria-label="Resize Sidebar"],
 [aria-label="Resize side bar"], [class*="stSidebarResizer"], [class*="sidebar-resizer"], [class*="SidebarResizeHandle"] {
   display:none !important; width:0 !important; min-width:0 !important; max-width:0 !important; pointer-events:none !important;
 }
+
+
+/* Definitive v10 overrides: restore navy sidebar, fixed width and remove resize handle. */
+html body .stApp [data-testid="stSidebar"] {
+  width:15.5rem !important; min-width:15.5rem !important; max-width:15.5rem !important;
+  flex:0 0 15.5rem !important;
+  background:linear-gradient(180deg,#102b3a 0%,#173746 100%) !important;
+  border-right:1px solid rgba(255,255,255,.06) !important;
+  resize:none !important; overflow-x:hidden !important; overflow-y:hidden !important;
+  scrollbar-width:none !important; opacity:1 !important; filter:none !important;
+}
+html body .stApp [data-testid="stSidebar"] > div,
+html body .stApp [data-testid="stSidebar"] [data-testid="stSidebarContent"],
+html body .stApp [data-testid="stSidebar"] [data-testid="stSidebarUserContent"] {
+  background:transparent !important; opacity:1 !important; filter:none !important;
+  overflow-x:hidden !important; overflow-y:hidden !important; scrollbar-width:none !important;
+}
+html body .stApp [data-testid="stSidebar"] .sidebar-icon {background:#f1f7fb !important; color:#15394c !important;}
+html body .stApp [data-testid="stSidebar"] .sidebar-brand,
+html body .stApp [data-testid="stSidebar"] .sidebar-section,
+html body .stApp [data-testid="stSidebar"] .sidebar-nav-active,
+html body .stApp [data-testid="stSidebar"] .sidebar-note {opacity:1 !important; filter:none !important;}
+html, body, .stApp, [data-testid="stAppViewContainer"] {margin-top:0 !important; padding-top:0 !important;}
+[data-testid="stHeader"], [data-testid="stToolbar"], [data-testid="stDecoration"],
+[data-testid="stAppDeployButton"], [data-testid="stMainMenu"] {display:none !important; height:0 !important; min-height:0 !important; max-height:0 !important;}
+[data-testid="stAppViewContainer"] > .main, [data-testid="stMain"] {margin-top:0 !important; padding-top:0 !important; top:0 !important;}
+[data-testid="stMainBlockContainer"], .main .block-container {margin-top:0 !important; padding-top:.35rem !important;}
+body .stApp .topo {margin-top:0 !important; transform:none !important;}
