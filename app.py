@@ -185,6 +185,168 @@ st.markdown(
         margin-top: 0 !important;
     }
 
+
+    /* ===== Correção final de cabeçalho e menu lateral ===== */
+    [data-testid="stHeader"] {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100vw !important;
+        height: 3.25rem !important;
+        min-height: 3.25rem !important;
+        background: linear-gradient(110deg, #173c70 0%, #176ca8 100%) !important;
+        z-index: 1000000 !important;
+        box-shadow: 0 2px 8px rgba(10, 35, 70, .12) !important;
+    }
+    [data-testid="stHeader"]::before {
+        content: "" !important;
+        position: absolute !important;
+        inset: 0 !important;
+        background: linear-gradient(110deg, #173c70 0%, #176ca8 100%) !important;
+        z-index: -1 !important;
+    }
+    [data-testid="stToolbar"],
+    [data-testid="stHeader"] button,
+    [data-testid="stHeader"] button *,
+    [data-testid="stToolbar"] * {
+        color: #fff !important;
+    }
+    [data-testid="stHeader"] svg {
+        fill: currentColor !important;
+        color: #fff !important;
+    }
+
+    /* Place the app's own brand strip immediately below the toolbar and align its contents. */
+    body .stApp .topo {
+        margin-top: 3.25rem !important;
+        min-height: 3.25rem !important;
+        height: 3.25rem !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        padding: .45rem 1rem !important;
+        border-radius: 0 0 12px 12px !important;
+    }
+    body .stApp .topo-marca {
+        display: flex !important;
+        align-items: center !important;
+        gap: .65rem !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    body .stApp .topo-icone {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex: 0 0 2rem !important;
+        width: 2rem !important;
+        height: 2rem !important;
+        margin: 0 !important;
+    }
+    body .stApp .marca,
+    body .stApp .submarca {
+        margin: 0 !important;
+        line-height: 1.15 !important;
+    }
+
+    /* Use Streamlit's actual collapse/expand buttons; remove the resize cursor/handle. */
+    [data-testid="stSidebar"] {
+        resize: none !important;
+        cursor: default !important;
+    }
+    [data-testid="stSidebarResizeHandle"],
+    [data-testid="stSidebarResizeHandle"] *,
+    [data-testid="stSidebar"] [data-testid*="ResizeHandle"],
+    [data-testid="stSidebar"] [data-testid*="resizeHandle"],
+    [data-testid="stSidebar"] [style*="cursor: col-resize"],
+    [data-testid="stSidebar"] [style*="cursor: ew-resize"] {
+        display: none !important;
+        pointer-events: none !important;
+        width: 0 !important;
+        min-width: 0 !important;
+        cursor: default !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stSidebarCollapseButton"],
+    [data-testid="stSidebarCollapsedControl"],
+    [data-testid="stExpandSidebarButton"] {
+        display: flex !important;
+        position: fixed !important;
+        top: .45rem !important;
+        left: .6rem !important;
+        width: 2.2rem !important;
+        height: 2.2rem !important;
+        align-items: center !important;
+        justify-content: center !important;
+        z-index: 1000005 !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stSidebarCollapseButton"] button,
+    [data-testid="stSidebarCollapsedControl"] button,
+    [data-testid="stExpandSidebarButton"] button {
+        width: 2.1rem !important;
+        min-width: 2.1rem !important;
+        height: 2.1rem !important;
+        min-height: 2.1rem !important;
+        padding: 0 !important;
+        border-radius: 7px !important;
+        border: 1px solid rgba(255,255,255,.28) !important;
+        background: rgba(255,255,255,.12) !important;
+        color: #fff !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stSidebarCollapseButton"] button svg,
+    [data-testid="stSidebarCollapsedControl"] button svg,
+    [data-testid="stExpandSidebarButton"] button svg {
+        color: #fff !important;
+        fill: #fff !important;
+    }
+
+    /* Sidebar open: keep its brand below the top toggle; collapsed: show only the support mark. */
+    html body [data-testid="stSidebar"][aria-expanded="true"] {
+        width: 15.5rem !important;
+        min-width: 15.5rem !important;
+        max-width: 15.5rem !important;
+    }
+    html body [data-testid="stSidebar"][aria-expanded="true"] > div {
+        padding-top: 3.35rem !important;
+    }
+    html body [data-testid="stSidebar"][aria-expanded="false"] {
+        width: 4.25rem !important;
+        min-width: 4.25rem !important;
+        max-width: 4.25rem !important;
+        transform: translateX(0) !important;
+        translate: 0 0 !important;
+        overflow: hidden !important;
+    }
+    html body [data-testid="stSidebar"][aria-expanded="false"] .sidebar-brand {
+        display: flex !important;
+        width: 2.6rem !important;
+        height: 2.6rem !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    html body [data-testid="stSidebar"][aria-expanded="false"] .sidebar-brand > div:not(.sidebar-icon),
+    html body [data-testid="stSidebar"][aria-expanded="false"] .sidebar-section,
+    html body [data-testid="stSidebar"][aria-expanded="false"] .sidebar-nav-active,
+    html body [data-testid="stSidebar"][aria-expanded="false"] .sidebar-note {
+        display: none !important;
+    }
+    html body [data-testid="stSidebar"][aria-expanded="false"] .sidebar-icon {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 2.35rem !important;
+        height: 2.35rem !important;
+        margin: 0 !important;
+    }
+    body:has([data-testid="stSidebar"][aria-expanded="false"]) [data-testid="stMain"] {
+        margin-left: 4.25rem !important;
+        width: calc(100% - 4.25rem) !important;
+        max-width: calc(100% - 4.25rem) !important;
+    }
+
     /* Sidebar aberta: largura fixa; remove a alça de arraste e preserva o botão nativo. */
     [data-testid="stSidebar"] { resize: none !important; }
     [data-testid="stSidebar"] [data-testid="stSidebarResizeHandle"],
