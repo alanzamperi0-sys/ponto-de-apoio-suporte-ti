@@ -237,37 +237,62 @@ if st.session_state.chamado_detalhe_id is not None:
                     width: 320px !important;
                     max-width: calc(100vw - 290px) !important;
                 }
+                .st-key-taskbar_tab [data-testid="stHorizontalBlock"]:has(.st-key-btn_restore_tb) {
+                    display: grid !important;
+                    grid-template-columns: minmax(0, 1fr) 36px 36px !important;
+                    gap: 8px !important;
+                    align-items: center !important;
+                    width: 100% !important;
+                }
+                .st-key-taskbar_tab [data-testid="stHorizontalBlock"]:has(.st-key-btn_restore_tb) > [data-testid="column"] {
+                    width: auto !important;
+                    min-width: 0 !important;
+                    max-width: none !important;
+                    flex: none !important;
+                }
                 .st-key-taskbar_tab .st-key-btn_restore_tb button,
                 .st-key-taskbar_tab .st-key-btn_close_tb button {
+                    position: relative !important;
                     display: inline-flex !important;
                     align-items: center !important;
                     justify-content: center !important;
-                    min-height: 32px !important;
-                    min-width: 32px !important;
-                    width: 32px !important;
-                    max-width: 32px !important;
+                    min-height: 34px !important;
+                    min-width: 34px !important;
+                    width: 34px !important;
+                    max-width: 34px !important;
+                    height: 34px !important;
                     padding: 0 !important;
-                    font-size: 1rem !important;
+                    font-size: 0 !important;
                     line-height: 1 !important;
-                    font-weight: 700 !important;
-                    white-space: nowrap !important;
-                    color: #173746 !important;
-                    -webkit-text-fill-color: #173746 !important;
+                    color: transparent !important;
+                    -webkit-text-fill-color: transparent !important;
                     background: #f0f5fb !important;
                     border: 1px solid #b9ccdf !important;
                     border-radius: 6px !important;
                     opacity: 1 !important;
+                    box-shadow: none !important;
+                }
+                .st-key-taskbar_tab .st-key-btn_restore_tb button::before,
+                .st-key-taskbar_tab .st-key-btn_close_tb button::before {
+                    content: "" !important;
+                    display: block !important;
+                    width: 17px !important;
+                    height: 17px !important;
+                    background-repeat: no-repeat !important;
+                    background-position: center !important;
+                    background-size: contain !important;
+                }
+                .st-key-taskbar_tab .st-key-btn_restore_tb button::before {
+                    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23173646' stroke-width='1.7' stroke-linejoin='round'%3E%3Cpath d='M8 8V4.8A.8.8 0 0 1 8.8 4h11.4a.8.8 0 0 1 .8.8v11.4a.8.8 0 0 1-.8.8H17'/%3E%3Crect x='3' y='8' width='14' height='13' rx='1'/%3E%3C/svg%3E") !important;
+                }
+                .st-key-taskbar_tab .st-key-btn_close_tb button::before {
+                    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23173646' stroke-width='1.9' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6L6 18'/%3E%3C/svg%3E") !important;
                 }
                 .st-key-taskbar_tab .st-key-btn_restore_tb button p,
                 .st-key-taskbar_tab .st-key-btn_close_tb button p,
                 .st-key-taskbar_tab .st-key-btn_restore_tb button span,
                 .st-key-taskbar_tab .st-key-btn_close_tb button span {
-                    color: #173746 !important;
-                    -webkit-text-fill-color: #173746 !important;
-                    opacity: 1 !important;
-                    margin: 0 !important;
-                    white-space: nowrap !important;
-                    line-height: 1 !important;
+                    display: none !important;
                 }
                 </style>
                 """,
@@ -282,14 +307,14 @@ if st.session_state.chamado_detalhe_id is not None:
                     st.markdown(f"📋 **Chamado #{str(chamado_atual['id']).zfill(3)}**")
                 with col_t2:
                     if st.button(
-                        "#", key="btn_restore_tb",
+                        "Restaurar", key="btn_restore_tb",
                         help="Restaurar janela", use_container_width=False
                     ):
                         st.session_state.modal_minimized = False
                         st.rerun()
                 with col_t3:
                     if st.button(
-                        "X", key="btn_close_tb",
+                        "Fechar", key="btn_close_tb",
                         help="Fechar janela", use_container_width=False
                     ):
                         st.session_state.chamado_detalhe_id = None
@@ -322,30 +347,68 @@ if st.session_state.chamado_detalhe_id is not None:
                 word-break: normal !important;
             }
 
-            /* Compact icons: hyphen = minimize, # = maximize/restore, X = close. */
+            /* Header keeps the title flexible and the three window controls fixed-width. */
+            .st-key-modal_container [data-testid="stHorizontalBlock"]:has(.st-key-btn_min_modal) {
+                display: grid !important;
+                grid-template-columns: minmax(0, 1fr) 36px 36px 36px !important;
+                gap: 8px !important;
+                align-items: center !important;
+                width: 100% !important;
+            }
+            .st-key-modal_container [data-testid="stHorizontalBlock"]:has(.st-key-btn_min_modal) > [data-testid="column"] {
+                width: auto !important;
+                min-width: 0 !important;
+                max-width: none !important;
+                flex: none !important;
+            }
+
+            /* Realistic window-control icons drawn as SVGs, independent of font rendering. */
             .st-key-modal_container .st-key-btn_min_modal button,
             .st-key-modal_container .st-key-btn_max_modal button,
             .st-key-modal_container .st-key-btn_close_modal button {
+                position: relative !important;
                 display: inline-flex !important;
                 align-items: center !important;
                 justify-content: center !important;
-                min-height: 30px !important;
-                min-width: 32px !important;
-                width: 32px !important;
-                max-width: 32px !important;
+                min-height: 34px !important;
+                min-width: 34px !important;
+                width: 34px !important;
+                max-width: 34px !important;
+                height: 34px !important;
                 padding: 0 !important;
-                font-family: Arial, sans-serif !important;
-                font-size: 1rem !important;
+                font-size: 0 !important;
                 line-height: 1 !important;
-                font-weight: 700 !important;
-                white-space: nowrap !important;
-                color: #173746 !important;
-                -webkit-text-fill-color: #173746 !important;
+                color: transparent !important;
+                -webkit-text-fill-color: transparent !important;
                 background: #f0f5fb !important;
                 border: 1px solid #b9ccdf !important;
                 border-radius: 6px !important;
                 opacity: 1 !important;
                 box-shadow: none !important;
+                flex: 0 0 34px !important;
+            }
+            .st-key-modal_container .st-key-btn_min_modal button::before,
+            .st-key-modal_container .st-key-btn_max_modal button::before,
+            .st-key-modal_container .st-key-btn_close_modal button::before {
+                content: "" !important;
+                display: block !important;
+                width: 17px !important;
+                height: 17px !important;
+                background-repeat: no-repeat !important;
+                background-position: center !important;
+                background-size: contain !important;
+            }
+            .st-key-modal_container .st-key-btn_min_modal button::before {
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23173646' stroke-width='1.8' stroke-linecap='round'%3E%3Cpath d='M5 17h14'/%3E%3C/svg%3E") !important;
+            }
+            .st-key-modal_container .st-key-btn_max_modal button::before {
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23173646' stroke-width='1.7' stroke-linejoin='round'%3E%3Crect x='4.5' y='4.5' width='15' height='15' rx='1'/%3E%3C/svg%3E") !important;
+            }
+            .st-key-modal_container .st-key-btn_close_modal button::before {
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23173646' stroke-width='1.9' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6L6 18'/%3E%3C/svg%3E") !important;
+            }
+            .st-key-modal_container .st-key-btn_max_modal button::before {
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23173646' stroke-width='1.7' stroke-linejoin='round'%3E%3Crect x='4.5' y='4.5' width='15' height='15' rx='1'/%3E%3C/svg%3E") !important;
             }
             .st-key-modal_container .st-key-btn_min_modal button p,
             .st-key-modal_container .st-key-btn_max_modal button p,
@@ -353,19 +416,25 @@ if st.session_state.chamado_detalhe_id is not None:
             .st-key-modal_container .st-key-btn_min_modal button span,
             .st-key-modal_container .st-key-btn_max_modal button span,
             .st-key-modal_container .st-key-btn_close_modal button span {
-                color: #173746 !important;
-                -webkit-text-fill-color: #173746 !important;
-                opacity: 1 !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                line-height: 1 !important;
-            }
-            .st-key-modal_container [data-testid="stHorizontalBlock"]:has(.st-key-btn_min_modal) {
-                gap: 0.15rem !important;
+                display: none !important;
             }
 
+            .st-key-modal_container [data-testid="stVerticalBlockBorderWrapper"] {
+                min-height: 0 !important;
+                height: 100% !important;
+                box-sizing: border-box !important;
+            }
+            .st-key-modal_container [data-testid="stVerticalBlockBorderWrapper"] > div[data-testid="stVerticalBlock"] {
+                display: flex !important;
+                flex-direction: column !important;
+                min-height: 0 !important;
+                height: 100% !important;
+                box-sizing: border-box !important;
+            }
             .st-key-modal_body {
-                max-height: calc(82vh - 125px) !important;
+                height: calc(100% - 90px) !important;
+                max-height: none !important;
+                flex: 1 1 auto !important;
                 overflow-y: auto !important;
                 overflow-x: hidden !important;
                 overscroll-behavior: contain !important;
@@ -433,24 +502,47 @@ if st.session_state.chamado_detalhe_id is not None:
             if st.session_state.modal_maximized:
                 max_css += """
                 .st-key-modal_container {
-                    top: 10px !important;
-                    left: 10px !important;
-                    right: 10px !important;
-                    bottom: 10px !important;
+                    top: 0 !important;
+                    left: 0 !important;
+                    right: 0 !important;
+                    bottom: 0 !important;
                     transform: none !important;
-                    width: calc(100vw - 20px) !important;
-                    height: calc(100dvh - 20px) !important;
+                    width: 100vw !important;
+                    height: 100dvh !important;
+                    min-height: 0 !important;
                     max-width: none !important;
-                    max-height: calc(100dvh - 20px) !important;
+                    max-height: 100dvh !important;
+                    margin: 0 !important;
+                    border-radius: 0 !important;
                     resize: none !important;
                     overflow: hidden !important;
+                    cursor: default !important;
+                }
+                .st-key-modal_container [data-testid="stVerticalBlockBorderWrapper"] {
+                    height: 100% !important;
+                    min-height: 0 !important;
+                }
+                .st-key-modal_container [data-testid="stVerticalBlockBorderWrapper"] > div[data-testid="stVerticalBlock"] {
+                    height: 100% !important;
+                    min-height: 0 !important;
+                    display: flex !important;
+                    flex-direction: column !important;
                 }
                 .st-key-modal_body {
-                    max-height: calc(100dvh - 105px) !important;
+                    height: calc(100dvh - 105px) !important;
+                    max-height: none !important;
+                    flex: 1 1 auto !important;
                     overflow-y: auto !important;
                 }
                 .st-key-modal_container .modal-resize-handle {
                     display: none !important;
+                }
+                .st-key-modal_container [data-testid="stHorizontalBlock"]:has(.st-key-btn_min_modal) {
+                    grid-template-columns: minmax(0, 1fr) 36px 36px 36px !important;
+                    gap: 8px !important;
+                }
+                .st-key-modal_container .st-key-btn_max_modal button::before {
+                    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23173646' stroke-width='1.7' stroke-linejoin='round'%3E%3Cpath d='M8 8V4.8A.8.8 0 0 1 8.8 4h11.4a.8.8 0 0 1 .8.8v11.4a.8.8 0 0 1-.8.8H17'/%3E%3Crect x='3' y='8' width='14' height='13' rx='1'/%3E%3C/svg%3E") !important;
                 }
                 """
             st.markdown(f"<style>{max_css}</style>", unsafe_allow_html=True)
@@ -463,15 +555,15 @@ if st.session_state.chamado_detalhe_id is not None:
                 with ch_titulo:
                     st.markdown(f"**📋 Detalhes #{str(chamado_atual['id']).zfill(3)}**")
                 with b_min:
-                    if st.button("-", key="btn_min_modal", help="Minimizar janela", use_container_width=False):
+                    if st.button("Minimizar", key="btn_min_modal", help="Minimizar janela", use_container_width=False):
                         st.session_state.modal_minimized = True
                         st.rerun()
                 with b_max:
-                    if st.button("#", key="btn_max_modal", help="Maximizar ou restaurar janela", use_container_width=False):
+                    if st.button("Restaurar" if st.session_state.modal_maximized else "Maximizar", key="btn_max_modal", help="Maximizar ou restaurar janela", use_container_width=False):
                         st.session_state.modal_maximized = not st.session_state.modal_maximized
                         st.rerun()
                 with b_fechar:
-                    if st.button("X", key="btn_close_modal", help="Fechar janela", use_container_width=False):
+                    if st.button("Fechar", key="btn_close_modal", help="Fechar janela", use_container_width=False):
                         st.session_state.chamado_detalhe_id = None
                         st.session_state.modal_minimized = False
                         st.session_state.modal_maximized = False
@@ -562,14 +654,18 @@ if st.session_state.chamado_detalhe_id is not None:
                       modal.dataset.resizeInitialized = 'true';
                     }
 
+                    const header = modal.querySelector('[data-testid="stHorizontalBlock"]:has(.st-key-btn_min_modal)');
+                    if (header) {
+                      header.style.cursor = modal.classList.contains('modal-maximized') ? 'default' : 'move';
+                    }
+
                     if (modal.dataset.dragInitialized !== 'true') {
-                      const header = modal.querySelector('[data-testid="stHorizontalBlock"]');
                       if (!header) return;
-                      header.style.cursor = 'move';
                       let isDragging = false;
                       let startX, startY, initialLeft, initialTop;
 
                       header.addEventListener('pointerdown', (event) => {
+                        if (modal.classList.contains('modal-maximized')) return;
                         if (event.target.closest('button') || event.target.closest('.modal-resize-handle')) return;
                         isDragging = true;
                         startX = event.clientX;
@@ -590,7 +686,7 @@ if st.session_state.chamado_detalhe_id is not None:
                       });
 
                       header.addEventListener('pointermove', (event) => {
-                        if (!isDragging) return;
+                        if (!isDragging || modal.classList.contains('modal-maximized')) return;
                         const dx = event.clientX - startX;
                         const dy = event.clientY - startY;
                         const rect = modal.getBoundingClientRect();
