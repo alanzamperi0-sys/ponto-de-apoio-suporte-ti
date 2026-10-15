@@ -278,17 +278,47 @@ if st.session_state.chamado_detalhe_id is not None:
                         st.session_state.modal_maximized = False
                         st.rerun()
         else:
-            max_css = ""
+            # Mantém a janela dentro da tela e permite rolar todo o conteúdo
+            # quando o título ou a descrição do chamado forem longos.
+            max_css = """
+            .st-key-modal_container {
+                height: auto !important;
+                max-height: calc(100dvh - 20px) !important;
+                overflow-y: auto !important;
+                overflow-x: hidden !important;
+                overscroll-behavior: contain !important;
+                box-sizing: border-box !important;
+                scrollbar-width: thin;
+            }
+
+            .st-key-modal_container [data-testid="stMarkdownContainer"] {
+                overflow-wrap: anywhere !important;
+                word-break: normal !important;
+            }
+
+            .st-key-modal_container [data-testid="stHorizontalBlock"]:has(.st-key-btn_min_modal) {
+                position: sticky !important;
+                top: 0 !important;
+                z-index: 1000 !important;
+                background: var(--background-color, #ffffff) !important;
+                padding-top: 4px !important;
+                padding-bottom: 6px !important;
+                border-bottom: 1px solid rgba(128, 128, 128, 0.25);
+            }
+            """
+
             if st.session_state.modal_maximized:
-                max_css = """
+                max_css += """
                 .st-key-modal_container {
                     top: 10px !important;
                     left: 10px !important;
+                    right: 10px !important;
+                    bottom: auto !important;
                     transform: none !important;
                     width: calc(100vw - 20px) !important;
-                    height: calc(100vh - 20px) !important;
+                    height: calc(100dvh - 20px) !important;
                     max-width: none !important;
-                    max-height: none !important;
+                    max-height: calc(100dvh - 20px) !important;
                 }
                 """
             st.markdown(f"<style>{max_css}</style>", unsafe_allow_html=True)
