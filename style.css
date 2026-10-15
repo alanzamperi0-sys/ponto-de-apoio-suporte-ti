@@ -1,4 +1,4 @@
-/* Ponto de Apoio — estilos completos e corrigidos */
+/* Ponto de Apoio — Estilos corrigidos e alinhados */
 :root { 
   --navy: #102b3a; 
   --blue: #1769b0; 
@@ -12,9 +12,10 @@
   color: var(--text); 
 }
 
+/* Dá espaço suficiente no topo para o botão flutuar sem tapar o cabeçalho azul */
 [data-testid="stMainBlockContainer"] { 
   max-width: 1680px; 
-  padding: 1.65rem 1.2rem 1.2rem !important; 
+  padding: 4.5rem 1.2rem 1.2rem !important; 
 }
 
 h1 { color: #10233f; font-size: 1.9rem; font-weight: 800; letter-spacing: -.025em; margin: .2rem 0 .25rem; }
@@ -71,9 +72,10 @@ p, [data-testid="stCaptionContainer"] { color: var(--muted); }
    ========================================================= */
 [data-testid="stHeader"] {
   background: transparent !important;
+  z-index: 99999 !important;
 }
 
-/* Botão de recolher (<<) na sidebar */
+/* Botão de recolher (<<) dentro da sidebar */
 [data-testid="stSidebarHeader"] button,
 [data-testid="stSidebarCollapseButton"],
 button[aria-label="Collapse sidebar"] {
@@ -92,10 +94,10 @@ button[aria-label="Collapse sidebar"] svg {
   stroke: #eef6ff !important;
 }
 
-/* Botão de expandir (>>) no canto superior esquerdo */
+/* Botão de expandir (>>) posicionado de forma limpa na barra superior esquerda */
 [data-testid="collapsedControl"] {
   position: fixed !important;
-  top: 1rem !important;
+  top: 0.75rem !important;
   left: 1rem !important;
   background: #102b3a !important;
   border-radius: 8px !important;
@@ -181,23 +183,4 @@ button[aria-label="Collapse sidebar"] svg {
 /* =========================================================
    CHAMADOS & FORMULÁRIOS
    ========================================================= */
-[data-testid="stVerticalBlockBorderWrapper"] { border-radius: 10px; border-color: #d7e5f5; background: #fff; }
-[data-testid="stVerticalBlockBorderWrapper"] > div { padding: .75rem; }
-.ticket-title { color: #10233f; font-size: 1.02rem; font-weight: 750; line-height: 1.35; }
-.ticket-description { color: #607895; font-size: .82rem; line-height: 1.45; margin: .2rem 0 .6rem; }
-.ticket-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .55rem; color: #68809b; font-size: .75rem; margin: .2rem 0 .65rem; }
-.meta-divider { color: #c4d2e1; }
-.ticket-priority { font-size: .76rem; padding-top: .1rem; }
-.prioridade-alta { color: #c73535; font-weight: 700; }
-.prioridade-media { color: #a36b00; font-weight: 700; }
-.prioridade-baixa { color: #28734a; font-weight: 700; }
-.priority-dot { display: inline-block; width: .48rem; height: .48rem; margin-right: .25rem; border-radius: 50%; background: currentColor; }
-
-[data-testid="stForm"] { border: 0; padding: 0; border-radius: 0; background: transparent; }
-[data-testid="stTextInput"] input, [data-testid="stTextArea"] textarea {
-  border-radius: 8px; border: 1px solid #dce7f5; background: #f0f5fb; color: #243d5a;
-}
-[data-testid="stWidgetLabel"] p { color: #36516f; font-size: .76rem; font-weight: 650; }
-[data-testid="stFormSubmitButton"] button { min-height: 39px; border: 0; border-radius: 8px; background: linear-gradient(100deg,#1169c8,#0876df); color: #fff; font-weight: 750; }
-[data-testid="stFormSubmitButton"] button:hover { background: #0c61bb; color: #fff; }
-hr { border-color: #dce7f5; margin: .9rem 0; }
+[data-testid="stVerticalBlockBorderWrapper"] { border-
