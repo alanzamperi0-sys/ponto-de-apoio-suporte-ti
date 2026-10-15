@@ -173,6 +173,178 @@ css_path = Path(__file__).with_name("style.css")
 if css_path.exists():
     st.markdown(f"<style>{css_path.read_text(encoding='utf-8')}</style>", unsafe_allow_html=True)
 
+# Barra lateral: oculta a barra de rolagem e transforma o estado recolhido
+# da sidebar nativa do Streamlit em uma faixa compacta com apenas o botão e o ícone.
+st.markdown(
+    r"""
+    <style>
+    /* Nunca mostrar a barra de rolagem da sidebar. */
+    section[data-testid="stSidebar"],
+    section[data-testid="stSidebar"] > div,
+    section[data-testid="stSidebar"] [data-testid="stSidebarContent"] {
+        overflow-y: hidden !important;
+        scrollbar-width: none !important;
+        -ms-overflow-style: none !important;
+    }
+    section[data-testid="stSidebar"]::-webkit-scrollbar,
+    section[data-testid="stSidebar"] *::-webkit-scrollbar {
+        display: none !important;
+        width: 0 !important;
+        height: 0 !important;
+    }
+
+    /* Transição suave para o conteúdo e para a sidebar. */
+    section[data-testid="stSidebar"] {
+        transition: width .20s ease, min-width .20s ease, transform .20s ease !important;
+    }
+    [data-testid="stMain"] {
+        transition: margin-left .20s ease, width .20s ease, max-width .20s ease !important;
+        min-width: 0 !important;
+    }
+
+    /* Estado recolhido: rail fixa de 68 px, sem esconder completamente a sidebar. */
+    section[data-testid="stSidebar"][aria-expanded="false"] {
+        position: fixed !important;
+        inset: 0 auto 0 0 !important;
+        width: 68px !important;
+        min-width: 68px !important;
+        max-width: 68px !important;
+        height: 100vh !important;
+        transform: translateX(0) !important;
+        visibility: visible !important;
+        overflow: hidden !important;
+        z-index: 1000000 !important;
+        background: linear-gradient(180deg, #102b3a 0%, #173746 100%) !important;
+        border-right: 1px solid rgba(255,255,255,.10) !important;
+        box-shadow: 2px 0 8px rgba(16,35,63,.08) !important;
+    }
+    section[data-testid="stSidebar"][aria-expanded="false"] > div:first-child,
+    section[data-testid="stSidebar"][aria-expanded="false"] [data-testid="stSidebarContent"] {
+        width: 68px !important;
+        min-width: 68px !important;
+        max-width: 68px !important;
+        height: 100vh !important;
+        min-height: 100vh !important;
+        overflow: hidden !important;
+        padding: .25rem .25rem 0 !important;
+        box-sizing: border-box !important;
+    }
+    /* Esconde todo o conteúdo expandido; preserva só o ícone do produto. */
+    section[data-testid="stSidebar"][aria-expanded="false"] .sidebar-brand {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        margin: 3.4rem 0 0 !important;
+        padding: .35rem 0 !important;
+        gap: 0 !important;
+        box-sizing: border-box !important;
+    }
+    section[data-testid="stSidebar"][aria-expanded="false"] .sidebar-brand > div:not(.sidebar-icon),
+    section[data-testid="stSidebar"][aria-expanded="false"] .sidebar-section,
+    section[data-testid="stSidebar"][aria-expanded="false"] .sidebar-nav-active,
+    section[data-testid="stSidebar"][aria-expanded="false"] .sidebar-note {
+        display: none !important;
+    }
+    section[data-testid="stSidebar"][aria-expanded="false"] .sidebar-icon {
+        display: flex !important;
+        flex: 0 0 42px !important;
+        width: 42px !important;
+        min-width: 42px !important;
+        max-width: 42px !important;
+        height: 42px !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
+        justify-content: center !important;
+        align-items: center !important;
+        font-size: 1.25rem !important;
+        border-radius: 11px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Move the native expand control to the top of the rail when collapsed. */
+    [data-testid="stSidebarCollapsedControl"],
+    [data-testid="stExpandSidebarButton"] {
+        position: fixed !important;
+        top: 10px !important;
+        left: 12px !important;
+        z-index: 1000002 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin: 0 !important;
+    }
+    [data-testid="stSidebarCollapsedControl"] button,
+    [data-testid="stExpandSidebarButton"] button {
+        width: 42px !important;
+        min-width: 42px !important;
+        max-width: 42px !important;
+        height: 38px !important;
+        min-height: 38px !important;
+        padding: 0 !important;
+        border-radius: 8px !important;
+        background: rgba(255,255,255,.10) !important;
+        border: 1px solid rgba(255,255,255,.22) !important;
+        color: #eef6ff !important;
+    }
+    [data-testid="stSidebarCollapsedControl"] button svg,
+    [data-testid="stExpandSidebarButton"] button svg {
+        color: #eef6ff !important;
+        fill: #eef6ff !important;
+    }
+
+    /* Quando a sidebar está recolhida, o conteúdo ocupa a área livre ao lado do rail. */
+    body:has(section[data-testid="stSidebar"][aria-expanded="false"]) [data-testid="stMain"] {
+        margin-left: 68px !important;
+        width: calc(100% - 68px) !important;
+        max-width: calc(100% - 68px) !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+    }
+    body:has(section[data-testid="stSidebar"][aria-expanded="false"]) [data-testid="stMainBlockContainer"] {
+        width: 100% !important;
+        max-width: none !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        box-sizing: border-box !important;
+        padding-left: 1.2rem !important;
+        padding-right: 1.2rem !important;
+    }
+    body:has(section[data-testid="stSidebar"][aria-expanded="false"]) .st-key-taskbar_tab {
+        left: 84px !important;
+    }
+
+    /* No modo expandido, manter a largura definida pelo tema e o conteúdo original. */
+    section[data-testid="stSidebar"][aria-expanded="true"] {
+        overflow: hidden !important;
+    }
+
+    @media (max-width: 700px) {
+        section[data-testid="stSidebar"][aria-expanded="false"] {
+            width: 60px !important;
+            min-width: 60px !important;
+            max-width: 60px !important;
+        }
+        section[data-testid="stSidebar"][aria-expanded="false"] > div:first-child,
+        section[data-testid="stSidebar"][aria-expanded="false"] [data-testid="stSidebarContent"] {
+            width: 60px !important;
+            min-width: 60px !important;
+            max-width: 60px !important;
+        }
+        body:has(section[data-testid="stSidebar"][aria-expanded="false"]) [data-testid="stMain"] {
+            margin-left: 60px !important;
+            width: calc(100% - 60px) !important;
+            max-width: calc(100% - 60px) !important;
+        }
+        body:has(section[data-testid="stSidebar"][aria-expanded="false"]) .st-key-taskbar_tab {
+            left: 72px !important;
+        }
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 with st.sidebar:
     st.markdown(
         """
@@ -333,7 +505,7 @@ if st.session_state.chamado_detalhe_id is not None:
                     [3.2, 0.48, 0.48], gap="small", vertical_alignment="center"
                 )
                 with col_t1:
-                    st.markdown(f"📋 **Chamado #{str(chamado_atual['id']).zfill(3)}**")
+                    st.markdown(f"📋 **#{str(chamado_atual['id']).zfill(3)}**")
                 with col_t2:
                     if st.button(
                         "Restaurar", key="btn_restore_tb",
@@ -588,7 +760,7 @@ if st.session_state.chamado_detalhe_id is not None:
                     [8.0, 0.48, 0.48, 0.48], gap="small", vertical_alignment="center"
                 )
                 with ch_titulo:
-                    st.markdown(f"**📋 Detalhes #{str(chamado_atual['id']).zfill(3)}**")
+                    st.markdown(f"**📋 #{str(chamado_atual['id']).zfill(3)}**")
                 with b_min:
                     if st.button("Minimizar", key="btn_min_modal", help="Minimizar janela", use_container_width=False):
                         st.session_state.modal_minimized = True
@@ -873,7 +1045,16 @@ with col_chamados:
             col_conteudo, col_status_fixo = st.columns([3.0, 1.15], vertical_alignment="center")
             
             with col_conteudo:
-                st.markdown(f'<div class="ticket-title">{escape(chamado["titulo"])}</div>', unsafe_allow_html=True)
+                ticket_id = str(chamado["id"]).zfill(3)
+                st.markdown(
+                    f'<div style="display:flex; align-items:flex-start; gap:8px; flex-wrap:wrap; margin-bottom:2px;">'
+                    f'<span style="flex:0 0 auto; display:inline-block; background:#eaf3ff; border:1px solid #c9def5; '
+                    f'border-radius:6px; padding:2px 7px; color:#1769b0; font-size:.72rem; font-weight:800; line-height:1.45;">'
+                    f'#{ticket_id}</span>'
+                    f'<div class="ticket-title" style="flex:1 1 180px; min-width:0;">{escape(chamado["titulo"])}</div>'
+                    f'</div>',
+                    unsafe_allow_html=True,
+                )
                 st.markdown(f'<div class="ticket-description">{escape(chamado["descricao"])}</div>', unsafe_allow_html=True)
                 
                 st.markdown(
