@@ -173,118 +173,149 @@ css_path = Path(__file__).with_name("style.css")
 if css_path.exists():
     st.markdown(f"<style>{css_path.read_text(encoding='utf-8')}</style>", unsafe_allow_html=True)
 
-# Barra lateral: oculta a barra de rolagem e transforma o estado recolhido
-# da sidebar nativa do Streamlit em uma faixa compacta com apenas o botão e o ícone.
+# Regras de layout e sidebar aplicadas depois do style.css, para prevalecer sobre regras antigas.
 st.markdown(
     r"""
     <style>
-    /* Nunca mostrar a barra de rolagem da sidebar. */
-    section[data-testid="stSidebar"],
-    section[data-testid="stSidebar"] > div,
-    section[data-testid="stSidebar"] [data-testid="stSidebarContent"] {
-        overflow-y: hidden !important;
+    /* Alinha o cabeçalho central com o topo da área de trabalho; style.css antigo aplicava 1.65rem. */
+    body .stApp [data-testid="stMainBlockContainer"] {
+        padding-top: .35rem !important;
+    }
+    body .stApp .topo {
+        margin-top: 0 !important;
+    }
+
+    /* Sidebar aberta: largura padrão e sem rolagem visível. */
+    html body [data-testid="stSidebar"][aria-expanded="true"] {
+        width: 15.5rem !important;
+        min-width: 15.5rem !important;
+        max-width: 15.5rem !important;
+        transform: translateX(0) !important;
+        visibility: visible !important;
+        overflow: hidden !important;
+    }
+    [data-testid="stSidebar"],
+    [data-testid="stSidebar"] > div,
+    [data-testid="stSidebar"] [data-testid="stSidebarContent"] {
         scrollbar-width: none !important;
         -ms-overflow-style: none !important;
     }
-    section[data-testid="stSidebar"]::-webkit-scrollbar,
-    section[data-testid="stSidebar"] *::-webkit-scrollbar {
+    [data-testid="stSidebar"]::-webkit-scrollbar,
+    [data-testid="stSidebar"] *::-webkit-scrollbar {
         display: none !important;
         width: 0 !important;
         height: 0 !important;
     }
 
-    /* Transição suave para o conteúdo e para a sidebar. */
-    section[data-testid="stSidebar"] {
-        transition: width .20s ease, min-width .20s ease, transform .20s ease !important;
-    }
-    [data-testid="stMain"] {
-        transition: margin-left .20s ease, width .20s ease, max-width .20s ease !important;
-        min-width: 0 !important;
-    }
-    /* Alinha o conteúdo principal mais perto do topo, como a barra lateral. */
-    [data-testid="stMainBlockContainer"] {
-        padding-top: .65rem !important;
-    }
-    /* Evita que o cabeçalho do detalhe crie um vazio acima do status. */
-    .st-key-modal_body {
-        padding-top: 0 !important;
-        margin-top: 0 !important;
-    }
-    .st-key-modal_body [data-testid="stVerticalBlock"] {
-        gap: .55rem !important;
-    }
-
-    /* Estado recolhido: rail fixa de 68 px, sem esconder completamente a sidebar. */
-    section[data-testid="stSidebar"][aria-expanded="false"] {
+    /* Estado recolhido: força a sidebar nativa a continuar visível como uma faixa de 68px. */
+    html body [data-testid="stSidebar"][aria-expanded="false"] {
+        display: block !important;
         position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        right: auto !important;
+        bottom: 0 !important;
         inset: 0 auto 0 0 !important;
         width: 68px !important;
         min-width: 68px !important;
         max-width: 68px !important;
         height: 100vh !important;
+        min-height: 100vh !important;
         transform: translateX(0) !important;
+        translate: 0 0 !important;
         visibility: visible !important;
+        opacity: 1 !important;
         overflow: hidden !important;
-        z-index: 1000000 !important;
+        z-index: 999990 !important;
         background: linear-gradient(180deg, #102b3a 0%, #173746 100%) !important;
         border-right: 1px solid rgba(255,255,255,.10) !important;
         box-shadow: 2px 0 8px rgba(16,35,63,.08) !important;
+        transition: width .20s ease, min-width .20s ease, transform .20s ease !important;
     }
-    section[data-testid="stSidebar"][aria-expanded="false"] > div:first-child,
-    section[data-testid="stSidebar"][aria-expanded="false"] [data-testid="stSidebarContent"] {
+    html body [data-testid="stSidebar"][aria-expanded="false"] > div,
+    html body [data-testid="stSidebar"][aria-expanded="false"] > div:first-child,
+    html body [data-testid="stSidebar"][aria-expanded="false"] [data-testid="stSidebarContent"],
+    html body [data-testid="stSidebar"][aria-expanded="false"] [data-testid="stSidebarUserContent"] {
+        display: block !important;
+        position: relative !important;
+        left: 0 !important;
+        top: 0 !important;
+        transform: none !important;
+        translate: 0 0 !important;
         width: 68px !important;
         min-width: 68px !important;
         max-width: 68px !important;
         height: 100vh !important;
         min-height: 100vh !important;
+        max-height: 100vh !important;
         overflow: hidden !important;
-        padding: .25rem .25rem 0 !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        padding: .25rem !important;
         box-sizing: border-box !important;
     }
-    /* Esconde todo o conteúdo expandido; preserva só o ícone do produto. */
-    section[data-testid="stSidebar"][aria-expanded="false"] .sidebar-brand {
-        display: flex !important;
+    /* The product mark is drawn outside the Streamlit sidebar as a fallback, so it remains visible
+       even if a particular Streamlit release hides the sidebar's inner content when collapsed. */
+    .collapsed-rail-shell,
+    .collapsed-rail-logo {
+        display: none !important;
+        position: fixed !important;
+        pointer-events: none !important;
+    }
+    .collapsed-rail-shell {
+        inset: 0 auto 0 0 !important;
+        width: 68px !important;
+        height: 100vh !important;
+        background: linear-gradient(180deg, #102b3a 0%, #173746 100%) !important;
+        border-right: 1px solid rgba(255,255,255,.10) !important;
+        box-shadow: 2px 0 8px rgba(16,35,63,.08) !important;
+        z-index: 999988 !important;
+    }
+    .collapsed-rail-logo {
+        left: 13px !important;
+        top: 60px !important;
+        width: 42px !important;
+        height: 42px !important;
         align-items: center !important;
         justify-content: center !important;
-        width: 100% !important;
-        margin: 3.4rem 0 0 !important;
-        padding: .35rem 0 !important;
-        gap: 0 !important;
-        box-sizing: border-box !important;
+        border-radius: 11px !important;
+        background: #f1f7fb !important;
+        color: #15394c !important;
+        font-size: 1.25rem !important;
+        z-index: 999992 !important;
     }
-    section[data-testid="stSidebar"][aria-expanded="false"] .sidebar-brand > div:not(.sidebar-icon),
-    section[data-testid="stSidebar"][aria-expanded="false"] .sidebar-section,
-    section[data-testid="stSidebar"][aria-expanded="false"] .sidebar-nav-active,
-    section[data-testid="stSidebar"][aria-expanded="false"] .sidebar-note {
+    body:has([data-testid="stSidebar"][aria-expanded="false"]) .collapsed-rail-shell {
+        display: block !important;
+    }
+    body:has([data-testid="stSidebar"][aria-expanded="false"]) .collapsed-rail-logo {
+        display: flex !important;
+    }
+    [data-testid="stElementContainer"]:has(.collapsed-rail-shell) {
+        height: 0 !important;
+        min-height: 0 !important;
+        max-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+    }
+    html body [data-testid="stSidebar"][aria-expanded="false"] .sidebar-brand,
+    html body [data-testid="stSidebar"][aria-expanded="false"] .sidebar-section,
+    html body [data-testid="stSidebar"][aria-expanded="false"] .sidebar-nav-active,
+    html body [data-testid="stSidebar"][aria-expanded="false"] .sidebar-note {
         display: none !important;
     }
-    section[data-testid="stSidebar"][aria-expanded="false"] .sidebar-icon {
-        display: flex !important;
-        flex: 0 0 42px !important;
-        width: 42px !important;
-        min-width: 42px !important;
-        max-width: 42px !important;
-        height: 42px !important;
-        margin: 0 auto !important;
-        padding: 0 !important;
-        justify-content: center !important;
-        align-items: center !important;
-        font-size: 1.25rem !important;
-        border-radius: 11px !important;
-        box-sizing: border-box !important;
-    }
 
-    /* Move the native expand control to the top of the rail when collapsed. */
+    /* Put the native expand toggle at the top of the visual rail. */
     [data-testid="stSidebarCollapsedControl"],
     [data-testid="stExpandSidebarButton"] {
         position: fixed !important;
         top: 10px !important;
         left: 12px !important;
-        z-index: 1000002 !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
         margin: 0 !important;
+        z-index: 1000005 !important;
     }
     [data-testid="stSidebarCollapsedControl"] button,
     [data-testid="stExpandSidebarButton"] button {
@@ -305,63 +336,92 @@ st.markdown(
         fill: #eef6ff !important;
     }
 
-    /* Quando a sidebar está recolhida, o conteúdo ocupa a área livre ao lado do rail. */
-    body:has(section[data-testid="stSidebar"][aria-expanded="false"]) [data-testid="stMain"] {
-        margin-left: 0 !important;
-        width: calc(100vw - 68px) !important;
-        max-width: calc(100vw - 68px) !important;
+    /* When collapsed, shift and widen the complete main panel to precisely follow the 68px rail. */
+    body:has([data-testid="stSidebar"][aria-expanded="false"]) [data-testid="stMain"] {
+        margin-left: 68px !important;
+        width: calc(100% - 68px) !important;
+        max-width: calc(100% - 68px) !important;
         min-width: 0 !important;
         box-sizing: border-box !important;
-        position: relative !important;
-        left: 68px !important;
+        transition: margin-left .20s ease, width .20s ease, max-width .20s ease !important;
     }
-    body:has(section[data-testid="stSidebar"][aria-expanded="false"]) [data-testid="stAppViewContainer"] {
-        width: 100vw !important;
-        max-width: 100vw !important;
-        overflow-x: hidden !important;
-    }
-    body:has(section[data-testid="stSidebar"][aria-expanded="false"]) [data-testid="stMainBlockContainer"] {
+    body:has([data-testid="stSidebar"][aria-expanded="false"]) [data-testid="stMainBlockContainer"] {
         width: 100% !important;
         max-width: none !important;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
+        margin: 0 !important;
+        padding: .35rem 1.2rem 1.2rem !important;
         box-sizing: border-box !important;
-        padding-left: 1.2rem !important;
-        padding-right: 1.2rem !important;
     }
-    body:has(section[data-testid="stSidebar"][aria-expanded="false"]) .st-key-taskbar_tab {
+    body:has([data-testid="stSidebar"][aria-expanded="false"]) .st-key-taskbar_tab {
         left: 84px !important;
     }
+    [data-testid="stMain"] {
+        min-width: 0 !important;
+        transition: margin-left .20s ease, width .20s ease, max-width .20s ease !important;
+    }
 
-    /* No modo expandido, manter a largura definida pelo tema e o conteúdo original. */
-    section[data-testid="stSidebar"][aria-expanded="true"] {
-        overflow: hidden !important;
+    /* ID chip shared by the ticket list and the details header. */
+    .ticket-id-badge {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        box-sizing: border-box !important;
+        padding: 2px 7px !important;
+        border: 1px solid #d7e5f5 !important;
+        border-radius: 6px !important;
+        background: #f7fbff !important;
+        color: #1769b0 !important;
+        font-size: .74rem !important;
+        line-height: 1.4 !important;
+        font-weight: 800 !important;
+        white-space: nowrap !important;
+    }
+    .modal-id-wrap { margin: 0 !important; padding: 0 !important; line-height: 1 !important; }
+    .st-key-modal_container [data-testid="stHorizontalBlock"]:has(.st-key-btn_min_modal) {
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+    }
+    .st-key-modal_body {
+        margin-top: -8px !important;
+        padding-top: 0 !important;
+        gap: .35rem !important;
+    }
+    .st-key-modal_body > [data-testid="stElementContainer"]:first-child {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+    .st-key-modal_container [data-testid="stVerticalBlock"] {
+        row-gap: .35rem !important;
     }
 
     @media (max-width: 700px) {
-        section[data-testid="stSidebar"][aria-expanded="false"] {
+        html body [data-testid="stSidebar"][aria-expanded="false"],
+        html body [data-testid="stSidebar"][aria-expanded="false"] > div,
+        html body [data-testid="stSidebar"][aria-expanded="false"] [data-testid="stSidebarContent"] {
             width: 60px !important;
             min-width: 60px !important;
             max-width: 60px !important;
         }
-        section[data-testid="stSidebar"][aria-expanded="false"] > div:first-child,
-        section[data-testid="stSidebar"][aria-expanded="false"] [data-testid="stSidebarContent"] {
-            width: 60px !important;
-            min-width: 60px !important;
-            max-width: 60px !important;
+        .collapsed-rail-shell { width: 60px !important; }
+        .collapsed-rail-logo { left: 9px !important; }
+        body:has([data-testid="stSidebar"][aria-expanded="false"]) [data-testid="stMain"] {
+            margin-left: 60px !important;
+            width: calc(100% - 60px) !important;
+            max-width: calc(100% - 60px) !important;
         }
-        body:has(section[data-testid="stSidebar"][aria-expanded="false"]) [data-testid="stMain"] {
-            margin-left: 0 !important;
-            left: 60px !important;
-            width: calc(100vw - 60px) !important;
-            max-width: calc(100vw - 60px) !important;
-        }
-        body:has(section[data-testid="stSidebar"][aria-expanded="false"]) .st-key-taskbar_tab {
+        body:has([data-testid="stSidebar"][aria-expanded="false"]) .st-key-taskbar_tab {
             left: 72px !important;
         }
     }
     </style>
     """,
+    unsafe_allow_html=True,
+)
+
+# Fallback visual rail: remains visible even on Streamlit versions that fully hide the sidebar body.
+st.markdown(
+    '<div class="collapsed-rail-shell" aria-hidden="true"></div>'
+    '<div class="collapsed-rail-logo" aria-hidden="true">🎧</div>',
     unsafe_allow_html=True,
 )
 
@@ -525,7 +585,7 @@ if st.session_state.chamado_detalhe_id is not None:
                     [3.2, 0.48, 0.48], gap="small", vertical_alignment="center"
                 )
                 with col_t1:
-                    st.markdown(f"📋 **#{str(chamado_atual['id']).zfill(3)}**")
+                    st.markdown(f'<span class="ticket-id-badge">#{str(chamado_atual["id"]).zfill(3)}</span>', unsafe_allow_html=True)
                 with col_t2:
                     if st.button(
                         "Restaurar", key="btn_restore_tb",
@@ -780,12 +840,7 @@ if st.session_state.chamado_detalhe_id is not None:
                     [8.0, 0.48, 0.48, 0.48], gap="small", vertical_alignment="center"
                 )
                 with ch_titulo:
-                    st.markdown(
-                        f'<span style="display:inline-block; background:#eaf3ff; border:1px solid #c9def5; '
-                        f'border-radius:6px; padding:3px 8px; color:#1769b0; font-size:.82rem; font-weight:800; line-height:1.45;">'
-                        f'#{str(chamado_atual["id"]).zfill(3)}</span>',
-                        unsafe_allow_html=True,
-                    )
+                    st.markdown(f'<div class="modal-id-wrap"><span class="ticket-id-badge">#{str(chamado_atual["id"]).zfill(3)}</span></div>', unsafe_allow_html=True)
                 with b_min:
                     if st.button("Minimizar", key="btn_min_modal", help="Minimizar janela", use_container_width=False):
                         st.session_state.modal_minimized = True
@@ -1014,11 +1069,6 @@ if st.session_state.chamado_detalhe_id is not None:
                 })();
                 </script>
                 """.replace('__MAXIMIZED__', 'true' if st.session_state.modal_maximized else 'false')
-                try:
-                    st.html(modal_script, unsafe_allow_javascript=True)
-                except TypeError:
-                    pass
-
                 with st.container(key="modal_body"):
                     status_css = {
                         "Aberto": {"cor": "#f97316", "fundo": "#fff7ed"},
@@ -1030,7 +1080,7 @@ if st.session_state.chamado_detalhe_id is not None:
                     st.markdown(
                         f"""
                         <div style="display: inline-flex; align-items: center; gap: 8px; border: 1.5px solid {config_modal['cor']}; 
-                             border-radius: 999px; background-color: {config_modal['fundo']}; padding: 4px 14px; margin-top: 0; margin-bottom: 8px;">
+                             border-radius: 999px; background-color: {config_modal['fundo']}; padding: 4px 14px; margin-bottom: 12px;">
                             <span style="width: 8px; height: 8px; background-color: {config_modal['cor']}; border-radius: 50%; display: inline-block;"></span>
                             <span style="color: {config_modal['cor']}; font-weight: 700; font-size: 0.85rem; font-family: sans-serif;">{chamado_atual['status']}</span>
                         </div>
@@ -1053,6 +1103,12 @@ if st.session_state.chamado_detalhe_id is not None:
                     
                     st.divider()
                     st.caption("Alterações de status e outras ações podem ser feitas diretamente na listagem principal.")
+
+                # Run the window-control script after rendering the detail body to avoid adding a gap below the ID.
+                try:
+                    st.html(modal_script, unsafe_allow_javascript=True)
+                except TypeError:
+                    pass
     else:
         st.session_state.chamado_detalhe_id = None
 
@@ -1071,8 +1127,7 @@ with col_chamados:
                 ticket_id = str(chamado["id"]).zfill(3)
                 st.markdown(
                     f'<div style="display:flex; align-items:flex-start; gap:8px; flex-wrap:wrap; margin-bottom:2px;">'
-                    f'<span style="flex:0 0 auto; display:inline-block; background:#eaf3ff; border:1px solid #c9def5; '
-                    f'border-radius:6px; padding:2px 7px; color:#1769b0; font-size:.72rem; font-weight:800; line-height:1.45;">'
+                    f'<span class="ticket-id-badge" style="flex:0 0 auto;">'
                     f'#{ticket_id}</span>'
                     f'<div class="ticket-title" style="flex:1 1 180px; min-width:0;">{escape(chamado["titulo"])}</div>'
                     f'</div>',
