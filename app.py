@@ -5,6 +5,7 @@ from datetime import datetime
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from psycopg2.pool import ThreadedConnectionPool
+from time import perf_counter
 
 
 st.set_page_config(page_title="Ponto de Apoio | Suporte de TI", page_icon="🛠️", layout="wide")
@@ -62,14 +63,36 @@ def inicializar_banco():
 
 
 def listar_chamados():
+    inicio = perf_counter()
+
+    inicio_conexao = perf_counter()
     conexao = conectar_banco()
+    fim_conexao = perf_counter()
+
     try:
+        inicio_consulta = perf_counter()
+
         with conexao.cursor() as cursor:
             cursor.execute(
                 "SELECT * FROM public.chamados ORDER BY id"
             )
             linhas = cursor.fetchall()
-            return [dict(linha) for linha in linhas]
+
+        fim_consulta = perf_counter()
+
+        print(
+            f"DIAGNOSTICO BANCO | "
+            f"Conexão do pool: {fim_conexao - inicio_conexao:.3f}s | "
+            f"Consulta: {fim_consulta - inicio_consulta:.3f}s | "
+            f"Total: {perf_counter() - inicio:.3f}s"
+        )
+
+        return [dict(linha) for linha in linhas]
+
+    except Exception:
+        conexao.rollback()
+        raise
+
     finally:
         devolver_conexao(conexao)
 
