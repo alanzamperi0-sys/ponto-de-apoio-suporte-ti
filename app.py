@@ -35,8 +35,9 @@ def devolver_conexao(conexao):
     obter_pool_conexoes().putconn(conexao)
 
 
+@st.cache_resource
 def inicializar_banco():
-    """Cria a tabela caso ela ainda não exista."""
+    """Cria a tabela uma única vez por execução do aplicativo."""
     conexao = conectar_banco()
     try:
         with conexao.cursor() as cursor:
@@ -60,6 +61,7 @@ def inicializar_banco():
         raise
     finally:
         devolver_conexao(conexao)
+    return True
 
 
 def listar_chamados():
@@ -80,17 +82,18 @@ def listar_chamados():
             linhas = cursor.fetchall()
 
         fim_consulta = perf_counter()
+        chamados = [dict(linha) for linha in linhas]
+        fim_total = perf_counter()
 
         diagnostico = (
-            f"Conexão: {fim_conexao - inicio_conexao:.3f}s | "
-            f"Consulta: {fim_consulta - inicio_consulta:.3f}s | "
-            f"Total: {perf_counter() - inicio:.3f}s"
+            f"Pool: {fim_conexao - inicio_conexao:.3f}s | "
+            f"Consulta SQL: {fim_consulta - inicio_consulta:.3f}s | "
+            f"Total da leitura: {fim_total - inicio:.3f}s"
         )
-
         st.session_state["diagnostico_banco"] = diagnostico
         print("DIAGNOSTICO BANCO |", diagnostico)
 
-        return [dict(linha) for linha in linhas]
+        return chamados
 
     except Exception:
         if conexao is not None:
@@ -158,10 +161,6 @@ def atualizar_status(chamado_id, novo_status):
 
 inicializar_banco()
 st.session_state.lista_chamados = listar_chamados()
-st.sidebar.info(
-    "Diagnóstico temporário do banco: "
-    + st.session_state.get("diagnostico_banco", "Aguardando medição")
-)
 st.session_state.proximo_id = max((c["id"] for c in st.session_state.lista_chamados), default=0) + 1
 
 if "chamado_detalhe_id" not in st.session_state:
@@ -180,9 +179,11 @@ PRIORIDADE_CLASSES = {"Baixa": "baixa", "Média": "media", "Alta": "alta"}
 def contar_status(status):
     return sum(c["status"] == status for c in st.session_state.lista_chamados)
 
-def salvar_status(chamado_id, novo_status):
-    atualizar_status(chamado_id, novo_status)
-    st.session_state.lista_chamados = listar_chamados()
+def salvar_status(chamado_id):
+    """Salva o status no callback, antes da página ser renderizada novamente."""
+    novo_status = st.session_state.get(f"select_acao_{chamado_id}")
+    if novo_status in STATUS:
+        atualizar_status(chamado_id, novo_status)
 
 
 css_path = Path(__file__).with_name("style.css")
@@ -220,6 +221,10 @@ st.markdown(
 
 st.title("Painel de chamados")
 st.caption("Registre solicitações e acompanhe cada atendimento.")
+st.caption(
+    "Diagnóstico temporário: "
+    + st.session_state.get("diagnostico_banco", "Aguardando medição")
+)
 
 metricas = [
     ("total", '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3h8v3h3a1.5 1.5 0 0 1 1.5 1.5v12A1.5 1.5 0 0 1 19 21H5a1.5 1.5 0 0 1-1.5-1.5v-12A1.5 1.5 0 0 1 5 6h3V3Z" fill="currentColor"/><path d="M9 3h6v4H9zM8 11h2m4 0h2m-8 4h2m4 0h2" stroke="#fff" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>', "Total de chamados", len(st.session_state.lista_chamados)),
@@ -473,12 +478,14 @@ with col_chamados:
                     unsafe_allow_html=True
                 )
 
-                novo_status = st.selectbox(
+                st.selectbox(
                     "Alterar status",
                     STATUS,
                     index=STATUS.index(chamado["status"]),
                     key=f"select_acao_{chamado['id']}",
-                    label_visibility="collapsed"
+                    label_visibility="collapsed",
+                    on_change=salvar_status,
+                    args=(chamado["id"],),
                 )
 
                 st.markdown(
@@ -495,9 +502,6 @@ with col_chamados:
                     unsafe_allow_html=True
                 )
 
-                if novo_status != chamado["status"]:
-                    salvar_status(chamado["id"], novo_status)
-                    st.rerun()
                 
                 st.markdown(
                     f"""
@@ -585,6 +589,5 @@ with col_formulario:
                     titulo.strip(), solicitante.strip(), categoria,
                     descricao.strip(), prioridade
                 )
-                st.session_state.lista_chamados = listar_chamados()
                 st.success("Chamado registrado com sucesso!")
                 st.rerun()
