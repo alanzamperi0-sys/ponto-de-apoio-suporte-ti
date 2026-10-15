@@ -64,12 +64,13 @@ def inicializar_banco():
 
 def listar_chamados():
     inicio = perf_counter()
-
-    inicio_conexao = perf_counter()
-    conexao = conectar_banco()
-    fim_conexao = perf_counter()
+    conexao = None
 
     try:
+        inicio_conexao = perf_counter()
+        conexao = conectar_banco()
+        fim_conexao = perf_counter()
+
         inicio_consulta = perf_counter()
 
         with conexao.cursor() as cursor:
@@ -80,22 +81,25 @@ def listar_chamados():
 
         fim_consulta = perf_counter()
 
-        print(
-            f"DIAGNOSTICO BANCO | "
-            f"Conexão do pool: {fim_conexao - inicio_conexao:.3f}s | "
+        diagnostico = (
+            f"Conexão: {fim_conexao - inicio_conexao:.3f}s | "
             f"Consulta: {fim_consulta - inicio_consulta:.3f}s | "
             f"Total: {perf_counter() - inicio:.3f}s"
         )
 
+        st.session_state["diagnostico_banco"] = diagnostico
+        print("DIAGNOSTICO BANCO |", diagnostico)
+
         return [dict(linha) for linha in linhas]
 
     except Exception:
-        conexao.rollback()
+        if conexao is not None:
+            conexao.rollback()
         raise
 
     finally:
-        devolver_conexao(conexao)
-
+        if conexao is not None:
+            devolver_conexao(conexao)
 
 def criar_chamado(
     titulo, solicitante, categoria, descricao, prioridade
