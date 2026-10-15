@@ -4,11 +4,17 @@ from html import escape
 from datetime import datetime
 import psycopg2
 from psycopg2.extras import RealDictCursor
+from psycopg2.pool import ThreadedConnectionPool
+
 
 st.set_page_config(page_title="Ponto de Apoio | Suporte de TI", page_icon="🛠️", layout="wide")
 
-def conectar_banco():
-    return psycopg2.connect(
+
+@st.cache_resource
+def obter_pool_conexoes():
+    return ThreadedConnectionPool(
+        minconn=1,
+        maxconn=5,
         host=st.secrets["postgres"]["host"],
         port=st.secrets["postgres"]["port"],
         dbname=st.secrets["postgres"]["dbname"],
@@ -16,12 +22,22 @@ def conectar_banco():
         password=st.secrets["postgres"]["password"],
         sslmode=st.secrets["postgres"]["sslmode"],
         cursor_factory=RealDictCursor,
+        connect_timeout=10,
     )
+
+
+def conectar_banco():
+    return obter_pool_conexoes().getconn()
+
+
+def devolver_conexao(conexao):
+    obter_pool_conexoes().putconn(conexao)
 
 
 def inicializar_banco():
     """Cria a tabela caso ela ainda não exista."""
-    with conectar_banco() as conexao:
+    conexao = conectar_banco()
+    try:
         with conexao.cursor() as cursor:
             cursor.execute(
                 """
@@ -37,19 +53,33 @@ def inicializar_banco():
                 )
                 """
             )
+        conexao.commit()
+    except Exception:
+        conexao.rollback()
+        raise
+    finally:
+        devolver_conexao(conexao)
+
 
 def listar_chamados():
-    with conectar_banco() as conexao:
+    conexao = conectar_banco()
+    try:
         with conexao.cursor() as cursor:
-            cursor.execute("SELECT * FROM public.chamados ORDER BY id")
+            cursor.execute(
+                "SELECT * FROM public.chamados ORDER BY id"
+            )
             linhas = cursor.fetchall()
             return [dict(linha) for linha in linhas]
+    finally:
+        devolver_conexao(conexao)
 
 
-def criar_chamado(titulo, solicitante, categoria, descricao, prioridade):
+def criar_chamado(
+    titulo, solicitante, categoria, descricao, prioridade
+):
     data_abertura = datetime.now().strftime("%d/%m/%Y %H:%M")
-
-    with conectar_banco() as conexao:
+    conexao = conectar_banco()
+    try:
         with conexao.cursor() as cursor:
             cursor.execute(
                 """
@@ -70,12 +100,18 @@ def criar_chamado(titulo, solicitante, categoria, descricao, prioridade):
                 ),
             )
             novo_chamado = cursor.fetchone()
-            return novo_chamado["id"]
-
+        conexao.commit()
+        return novo_chamado["id"]
+    except Exception:
+        conexao.rollback()
+        raise
+    finally:
+        devolver_conexao(conexao)
 
 
 def atualizar_status(chamado_id, novo_status):
-    with conectar_banco() as conexao:
+    conexao = conectar_banco()
+    try:
         with conexao.cursor() as cursor:
             cursor.execute(
                 """
@@ -85,6 +121,12 @@ def atualizar_status(chamado_id, novo_status):
                 """,
                 (novo_status, chamado_id),
             )
+        conexao.commit()
+    except Exception:
+        conexao.rollback()
+        raise
+    finally:
+        devolver_conexao(conexao)
 
 
 inicializar_banco()
