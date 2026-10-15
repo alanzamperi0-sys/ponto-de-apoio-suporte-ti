@@ -201,6 +201,18 @@ st.markdown(
         transition: margin-left .20s ease, width .20s ease, max-width .20s ease !important;
         min-width: 0 !important;
     }
+    /* Alinha o conteúdo principal mais perto do topo, como a barra lateral. */
+    [data-testid="stMainBlockContainer"] {
+        padding-top: .65rem !important;
+    }
+    /* Evita que o cabeçalho do detalhe crie um vazio acima do status. */
+    .st-key-modal_body {
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }
+    .st-key-modal_body [data-testid="stVerticalBlock"] {
+        gap: .55rem !important;
+    }
 
     /* Estado recolhido: rail fixa de 68 px, sem esconder completamente a sidebar. */
     section[data-testid="stSidebar"][aria-expanded="false"] {
@@ -295,11 +307,18 @@ st.markdown(
 
     /* Quando a sidebar está recolhida, o conteúdo ocupa a área livre ao lado do rail. */
     body:has(section[data-testid="stSidebar"][aria-expanded="false"]) [data-testid="stMain"] {
-        margin-left: 68px !important;
-        width: calc(100% - 68px) !important;
-        max-width: calc(100% - 68px) !important;
+        margin-left: 0 !important;
+        width: calc(100vw - 68px) !important;
+        max-width: calc(100vw - 68px) !important;
         min-width: 0 !important;
         box-sizing: border-box !important;
+        position: relative !important;
+        left: 68px !important;
+    }
+    body:has(section[data-testid="stSidebar"][aria-expanded="false"]) [data-testid="stAppViewContainer"] {
+        width: 100vw !important;
+        max-width: 100vw !important;
+        overflow-x: hidden !important;
     }
     body:has(section[data-testid="stSidebar"][aria-expanded="false"]) [data-testid="stMainBlockContainer"] {
         width: 100% !important;
@@ -332,9 +351,10 @@ st.markdown(
             max-width: 60px !important;
         }
         body:has(section[data-testid="stSidebar"][aria-expanded="false"]) [data-testid="stMain"] {
-            margin-left: 60px !important;
-            width: calc(100% - 60px) !important;
-            max-width: calc(100% - 60px) !important;
+            margin-left: 0 !important;
+            left: 60px !important;
+            width: calc(100vw - 60px) !important;
+            max-width: calc(100vw - 60px) !important;
         }
         body:has(section[data-testid="stSidebar"][aria-expanded="false"]) .st-key-taskbar_tab {
             left: 72px !important;
@@ -760,7 +780,12 @@ if st.session_state.chamado_detalhe_id is not None:
                     [8.0, 0.48, 0.48, 0.48], gap="small", vertical_alignment="center"
                 )
                 with ch_titulo:
-                    st.markdown(f"**📋 #{str(chamado_atual['id']).zfill(3)}**")
+                    st.markdown(
+                        f'<span style="display:inline-block; background:#eaf3ff; border:1px solid #c9def5; '
+                        f'border-radius:6px; padding:3px 8px; color:#1769b0; font-size:.82rem; font-weight:800; line-height:1.45;">'
+                        f'#{str(chamado_atual["id"]).zfill(3)}</span>',
+                        unsafe_allow_html=True,
+                    )
                 with b_min:
                     if st.button("Minimizar", key="btn_min_modal", help="Minimizar janela", use_container_width=False):
                         st.session_state.modal_minimized = True
@@ -995,8 +1020,6 @@ if st.session_state.chamado_detalhe_id is not None:
                     pass
 
                 with st.container(key="modal_body"):
-                    st.divider()
-
                     status_css = {
                         "Aberto": {"cor": "#f97316", "fundo": "#fff7ed"},
                         "Em andamento": {"cor": "#1677f2", "fundo": "#eff6ff"},
@@ -1007,7 +1030,7 @@ if st.session_state.chamado_detalhe_id is not None:
                     st.markdown(
                         f"""
                         <div style="display: inline-flex; align-items: center; gap: 8px; border: 1.5px solid {config_modal['cor']}; 
-                             border-radius: 999px; background-color: {config_modal['fundo']}; padding: 4px 14px; margin-bottom: 12px;">
+                             border-radius: 999px; background-color: {config_modal['fundo']}; padding: 4px 14px; margin-top: 0; margin-bottom: 8px;">
                             <span style="width: 8px; height: 8px; background-color: {config_modal['cor']}; border-radius: 50%; display: inline-block;"></span>
                             <span style="color: {config_modal['cor']}; font-weight: 700; font-size: 0.85rem; font-family: sans-serif;">{chamado_atual['status']}</span>
                         </div>
