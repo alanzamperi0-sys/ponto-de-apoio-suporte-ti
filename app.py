@@ -240,8 +240,10 @@ if st.session_state.chamado_detalhe_id is not None:
                 .st-key-taskbar_tab [data-testid="stHorizontalBlock"]:has(.st-key-btn_restore_tb) {
                     display: grid !important;
                     grid-template-columns: minmax(0, 1fr) 36px 36px !important;
-                    gap: 1.5px !important;
+                    column-gap: 1.8px !important;
+                    row-gap: 0 !important;
                     align-items: center !important;
+                    justify-items: stretch !important;
                     width: 100% !important;
                 }
                 .st-key-taskbar_tab [data-testid="stHorizontalBlock"]:has(.st-key-btn_restore_tb) > [data-testid="column"] {
@@ -271,6 +273,27 @@ if st.session_state.chamado_detalhe_id is not None:
                     border-radius: 6px !important;
                     opacity: 1 !important;
                     box-shadow: none !important;
+                    box-sizing: border-box !important;
+                    margin: 0 auto !important;
+                }
+                .st-key-taskbar_tab .st-key-btn_restore_tb,
+                .st-key-taskbar_tab .st-key-btn_close_tb {
+                    width: 36px !important;
+                    min-width: 36px !important;
+                    max-width: 36px !important;
+                    display: flex !important;
+                    justify-content: center !important;
+                    align-items: center !important;
+                    margin: 0 auto !important;
+                }
+                .st-key-taskbar_tab .st-key-btn_restore_tb [data-testid="stButton"],
+                .st-key-taskbar_tab .st-key-btn_close_tb [data-testid="stButton"] {
+                    width: 36px !important;
+                    min-width: 36px !important;
+                    display: flex !important;
+                    justify-content: center !important;
+                    align-items: center !important;
+                    margin: 0 auto !important;
                 }
                 .st-key-taskbar_tab .st-key-btn_restore_tb button::before,
                 .st-key-taskbar_tab .st-key-btn_close_tb button::before {
@@ -281,6 +304,12 @@ if st.session_state.chamado_detalhe_id is not None:
                     background-repeat: no-repeat !important;
                     background-position: center !important;
                     background-size: contain !important;
+                    position: absolute !important;
+                    left: 50% !important;
+                    top: 50% !important;
+                    transform: translate(-50%, -50%) !important;
+                    margin: 0 !important;
+                    pointer-events: none !important;
                 }
                 .st-key-taskbar_tab .st-key-btn_restore_tb button::before {
                     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23173646' stroke-width='1.7' stroke-linejoin='round'%3E%3Cpath d='M8 8V4.8A.8.8 0 0 1 8.8 4h11.4a.8.8 0 0 1 .8.8v11.4a.8.8 0 0 1-.8.8H17'/%3E%3Crect x='3' y='8' width='14' height='13' rx='1'/%3E%3C/svg%3E") !important;
@@ -351,7 +380,7 @@ if st.session_state.chamado_detalhe_id is not None:
             .st-key-modal_container [data-testid="stHorizontalBlock"]:has(.st-key-btn_min_modal) {
                 display: grid !important;
                 grid-template-columns: minmax(0, 1fr) 36px 36px 36px !important;
-                gap: 1.5px !important;
+                gap: 1.8px !important;
                 align-items: center !important;
                 width: 100% !important;
             }
@@ -387,32 +416,23 @@ if st.session_state.chamado_detalhe_id is not None:
                 box-shadow: none !important;
                 flex: 0 0 34px !important;
             }
-.st-key-modal_container .st-key-btn_min_modal button::before,
-.st-key-modal_container .st-key-btn_max_modal button::before,
-.st-key-modal_container .st-key-btn_close_modal button::before {
-    content: "" !important;
-    display: block !important;
-    width: 17px !important;
-    height: 17px !important;
-    background-repeat: no-repeat !important;
-    background-position: center !important;
-    background-size: contain !important;
-    position: absolute !important;
-    left: 50% !important;
-    top: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    margin: 0 !important;
-}
-
-.st-key-modal_container .st-key-btn_min_modal button,
-.st-key-modal_container .st-key-btn_max_modal button,
-.st-key-modal_container .st-key-btn_close_modal button {
-    position: relative !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 0 !important;
-}
+            .st-key-modal_container .st-key-btn_min_modal button::before,
+            .st-key-modal_container .st-key-btn_max_modal button::before,
+            .st-key-modal_container .st-key-btn_close_modal button::before {
+                content: "" !important;
+                display: block !important;
+                width: 17px !important;
+                height: 17px !important;
+                background-repeat: no-repeat !important;
+                background-position: center !important;
+                background-size: contain !important;
+                position: absolute !important;
+                left: 50% !important;
+                top: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                margin: 0 !important;
+                pointer-events: none !important;
+            }
             .st-key-modal_container .st-key-btn_min_modal button::before {
                 background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23173646' stroke-width='1.8' stroke-linecap='round'%3E%3Cpath d='M5 17h14'/%3E%3C/svg%3E") !important;
             }
@@ -554,7 +574,7 @@ if st.session_state.chamado_detalhe_id is not None:
                 }
                 .st-key-modal_container [data-testid="stHorizontalBlock"]:has(.st-key-btn_min_modal) {
                     grid-template-columns: minmax(0, 1fr) 36px 36px 36px !important;
-                    gap: 1.5px !important;
+                    gap: 1.8px !important;
                 }
                 .st-key-modal_container .st-key-btn_max_modal button::before {
                     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23173646' stroke-width='1.7' stroke-linejoin='round'%3E%3Cpath d='M8 8V4.8A.8.8 0 0 1 8.8 4h11.4a.8.8 0 0 1 .8.8v11.4a.8.8 0 0 1-.8.8H17'/%3E%3Crect x='3' y='8' width='14' height='13' rx='1'/%3E%3C/svg%3E") !important;
@@ -594,6 +614,61 @@ if st.session_state.chamado_detalhe_id is not None:
                     const modal = document.querySelector('.st-key-modal_container');
                     if (!modal) return;
                     modal.classList.toggle('modal-maximized', isMaximized);
+
+                    // CSS cannot override inline !important positions left by dragging/resizing.
+                    // Force exact viewport geometry on maximize, and restore the prior geometry on unmaximize.
+                    if (isMaximized) {
+                      if (modal.dataset.maximizedApplied !== 'true') {
+                        const hadCustomGeometry = Boolean(
+                          modal.style.left && modal.style.top && modal.style.transform === 'none'
+                        );
+                        modal.dataset.hadCustomGeometry = hadCustomGeometry ? 'true' : 'false';
+                        if (hadCustomGeometry) {
+                          const beforeMax = modal.getBoundingClientRect();
+                          modal.dataset.restoreLeft = String(beforeMax.left);
+                          modal.dataset.restoreTop = String(beforeMax.top);
+                          modal.dataset.restoreWidth = String(beforeMax.width);
+                          modal.dataset.restoreHeight = String(beforeMax.height);
+                        }
+                        modal.dataset.maximizedApplied = 'true';
+                      }
+                      modal.style.setProperty('position', 'fixed', 'important');
+                      modal.style.setProperty('left', '0px', 'important');
+                      modal.style.setProperty('top', '0px', 'important');
+                      modal.style.setProperty('right', 'auto', 'important');
+                      modal.style.setProperty('bottom', 'auto', 'important');
+                      modal.style.setProperty('transform', 'none', 'important');
+                      modal.style.setProperty('width', window.innerWidth + 'px', 'important');
+                      modal.style.setProperty('height', window.innerHeight + 'px', 'important');
+                      modal.style.setProperty('min-width', '0px', 'important');
+                      modal.style.setProperty('min-height', '0px', 'important');
+                      modal.style.setProperty('max-width', 'none', 'important');
+                      modal.style.setProperty('max-height', 'none', 'important');
+                      modal.style.setProperty('margin', '0px', 'important');
+                      modal.style.setProperty('border-radius', '0px', 'important');
+                      modal.style.setProperty('resize', 'none', 'important');
+                      modal.style.setProperty('overflow', 'hidden', 'important');
+                    } else if (modal.dataset.maximizedApplied === 'true') {
+                      if (modal.dataset.hadCustomGeometry === 'true') {
+                        modal.style.setProperty('position', 'fixed', 'important');
+                        modal.style.setProperty('left', (parseFloat(modal.dataset.restoreLeft) || 8) + 'px', 'important');
+                        modal.style.setProperty('top', (parseFloat(modal.dataset.restoreTop) || 8) + 'px', 'important');
+                        modal.style.setProperty('right', 'auto', 'important');
+                        modal.style.setProperty('bottom', 'auto', 'important');
+                        modal.style.setProperty('transform', 'none', 'important');
+                        modal.style.setProperty('width', (parseFloat(modal.dataset.restoreWidth) || 540) + 'px', 'important');
+                        modal.style.setProperty('height', (parseFloat(modal.dataset.restoreHeight) || 500) + 'px', 'important');
+                        modal.style.setProperty('max-width', '92vw', 'important');
+                        modal.style.setProperty('max-height', 'calc(100dvh - 16px)', 'important');
+                        modal.style.setProperty('min-width', '360px', 'important');
+                        modal.style.setProperty('min-height', '340px', 'important');
+                        modal.style.setProperty('margin', '0px', 'important');
+                        modal.style.setProperty('border-radius', '14px', 'important');
+                      } else {
+                        ['position','left','top','right','bottom','transform','width','height','min-width','min-height','max-width','max-height','margin','border-radius','resize','overflow'].forEach((property) => modal.style.removeProperty(property));
+                      }
+                      modal.dataset.maximizedApplied = 'false';
+                    }
 
                     if (modal.dataset.resizeInitialized !== 'true') {
                       const edges = ['n', 's', 'e', 'w', 'nw', 'ne', 'sw', 'se'];
@@ -721,6 +796,18 @@ if st.session_state.chamado_detalhe_id is not None:
                       header.addEventListener('pointerup', stopDrag);
                       header.addEventListener('pointercancel', stopDrag);
                       modal.dataset.dragInitialized = 'true';
+                    }
+
+                    if (modal.dataset.maxResizeListener !== 'true') {
+                      window.addEventListener('resize', () => {
+                        if (modal.dataset.maximizedApplied === 'true') {
+                          modal.style.setProperty('left', '0px', 'important');
+                          modal.style.setProperty('top', '0px', 'important');
+                          modal.style.setProperty('width', window.innerWidth + 'px', 'important');
+                          modal.style.setProperty('height', window.innerHeight + 'px', 'important');
+                        }
+                      });
+                      modal.dataset.maxResizeListener = 'true';
                     }
                   }
 
