@@ -158,6 +158,10 @@ def atualizar_status(chamado_id, novo_status):
 
 inicializar_banco()
 st.session_state.lista_chamados = listar_chamados()
+st.sidebar.info(
+    "Diagnóstico temporário do banco: "
+    + st.session_state.get("diagnostico_banco", "Aguardando medição")
+)
 st.session_state.proximo_id = max((c["id"] for c in st.session_state.lista_chamados), default=0) + 1
 
 if "chamado_detalhe_id" not in st.session_state:
