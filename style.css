@@ -1,67 +1,29 @@
-/* =========================================================
-   BARRA LATERAL (FUNDO ESCURO E TEXTOS CLAROS)
-   ========================================================= */
-[data-testid="stSidebar"], 
-[data-testid="stSidebar"] > div, 
-[data-testid="stSidebarContent"] { 
-  background: linear-gradient(180deg, #102b3a 0%, #173746 100%) !important; 
-  border-right: 1px solid rgba(255,255,255,.06);
-}
+/* Ponto de Apoio — estilos alinhados ao print de referência */
+:root { --navy:#102b3a; --blue:#1769b0; --line:#d7e5f5; --text:#10233f; --muted:#607895; }
+.stApp, [data-testid="stAppViewContainer"] > .main { background:#fbfdff; color:var(--text); }
+[data-testid="stMainBlockContainer"] { max-width:1680px; padding:.65rem 1.2rem 1.2rem; }
+h1 { color:#10233f; font-size:1.9rem; font-weight:800; letter-spacing:-.025em; margin:.2rem 0 .25rem; }
+h2 { color:#10233f; font-size:1.2rem; font-weight:750; }
+h3 { color:#10233f; }
+p, [data-testid="stCaptionContainer"] { color:var(--muted); }
+[data-testid="stHorizontalBlock"] { gap:.65rem; }
 
-[data-testid="stSidebar"] { 
-  width: 15.5rem !important; 
-  min-width: 15.5rem !important; 
-  max-width: 15.5rem !important; 
-}
+/* Sidebar */
+[data-testid="stSidebar"] { width:15.5rem !important; min-width:15.5rem !important; max-width:15.5rem !important; background:linear-gradient(180deg,#102b3a 0%,#173746 100%) !important; border-right:1px solid rgba(255,255,255,.06); }
+[data-testid="stSidebar"] > div { padding:1.15rem .75rem; }
+.sidebar-brand { display:flex; align-items:center; gap:.7rem; padding:.55rem .45rem 2.3rem; color:#eef6ff !important; }
+.sidebar-icon { display:flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:12px; background:#f1f7fb; color:#15394c; font-size:1.3rem; flex-shrink:0; }
+.sidebar-title { font-size:1rem; font-weight:800; line-height:1.3; color:#eef6ff !important; }
+.sidebar-subtitle { margin-top:.15rem; font-size:.63rem; letter-spacing:.16em; opacity:.75; color:#a8c2d2 !important; }
+.sidebar-section { color:#a8c2d2 !important; font-size:.66rem; letter-spacing:.13em; padding:.2rem .5rem .7rem; }
+.sidebar-nav-active { padding:.75rem .8rem; border-radius:10px; background:rgba(119,174,216,.2); border:1px solid rgba(201,229,250,.16); font-weight:750; color:#eef6ff !important; }
+.sidebar-note { width:100%; max-width:none; box-sizing:border-box; display:block;
+  margin-top:min(48vh,25rem); margin-left:0; margin-right:0; padding:1rem;
+  border:1px solid rgba(207,231,247,.14); border-radius:12px;
+  background:rgba(0,0,0,.10); font-size:.78rem; line-height:1.5; color:#d9e9f5 !important; }
+.sidebar-note strong { color:#fff !important; }
 
-[data-testid="stSidebar"] > div { padding: 1.15rem .75rem; }
-
-/* Força todas as letras, títulos e ícones da barra lateral a ficarem claros */
-[data-testid="stSidebar"] p, 
-[data-testid="stSidebar"] span, 
-[data-testid="stSidebar"] div, 
-[data-testid="stSidebar"] label,
-[data-testid="stSidebar"] .sidebar-title, 
-[data-testid="stSidebar"] .sidebar-subtitle, 
-[data-testid="stSidebar"] .sidebar-section,
-.sidebar-brand, .sidebar-title {
-  color: #eef6ff !important;
-}
-
-.sidebar-brand { display: flex; align-items: center; gap: .7rem; padding: .55rem .45rem 2.3rem; }
-.sidebar-icon { display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 12px; background: #f1f7fb; color: #15394c !important; font-size: 1.3rem; flex-shrink: 0; }
-.sidebar-title { font-size: 1rem; font-weight: 800; line-height: 1.3; }
-.sidebar-subtitle { margin-top: .15rem; font-size: .63rem; letter-spacing: .16em; opacity: .75; color: #a8c2d2 !important; }
-.sidebar-section { color: #a8c2d2 !important; font-size: .66rem; letter-spacing: .13em; padding: .2rem .5rem .7rem; }
-.sidebar-nav-active { padding: .75rem .8rem; border-radius: 10px; background: rgba(119,174,216,.2); border: 1px solid rgba(201,229,250,.16); font-weight: 750; color: #eef6ff !important; }
-
-[data-testid="stSidebar"] [data-testid="stVerticalBlock"] {
-  min-height: calc(100vh - 2rem);
-}
-
-.sidebar-note { 
-  position: fixed !important; 
-  bottom: 1rem !important; 
-  left: .75rem !important; 
-  width: calc(15.5rem - 1.5rem) !important; 
-  max-width: calc(100vw - 1.5rem) !important; 
-  margin-top: 0 !important; 
-  padding: 1rem;
-  border: 1px solid rgba(207,231,247,.14); 
-  border-radius: 12px; 
-  background: rgba(0,0,0,.20) !important; 
-  font-size: .78rem; 
-  line-height: 1.5; 
-  color: #d9e9f5 !important; 
-  box-sizing: border-box !important;
-}
-.sidebar-note strong { color: #fff !important; }
-
-/* =========================================================
-   BOTÕES DE RECOLHER E EXPANDIR (<< e >>)
-   ========================================================= */
-
-/* Botão de recolher (<<) quando a barra está aberta */
+/* Botões de recolher e expandir a barra lateral */
 [data-testid="stSidebarHeader"] button,
 [data-testid="stSidebarCollapseButton"],
 button[aria-label="Collapse sidebar"] {
@@ -71,7 +33,6 @@ button[aria-label="Collapse sidebar"] {
   color: #eef6ff !important;
   z-index: 999999 !important;
 }
-
 [data-testid="stSidebarHeader"] button svg,
 [data-testid="stSidebarCollapseButton"] svg,
 button[aria-label="Collapse sidebar"] svg {
@@ -79,24 +40,65 @@ button[aria-label="Collapse sidebar"] svg {
   color: #eef6ff !important;
   stroke: #eef6ff !important;
 }
-
-/* Botão de expandir (>>) quando a barra está fechada */
 [data-testid="collapsedControl"] {
+  position: fixed !important;
+  top: 1rem !important;
+  left: 1rem !important;
   background: #102b3a !important;
   border-radius: 8px !important;
   padding: 6px !important;
   border: 1px solid rgba(255, 255, 255, 0.25) !important;
   box-shadow: 0 4px 12px rgba(16, 35, 63, 0.3) !important;
   z-index: 999999 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
-
 [data-testid="collapsedControl"] svg {
   fill: #eef6ff !important;
   color: #eef6ff !important;
   stroke: #eef6ff !important;
 }
+[data-testid="stSidebarResizer"] { display: none !important; }
 
-/* Oculta apenas o divisor de redimensionamento da sidebar */
-[data-testid="stSidebarResizer"] {
-  display: none !important;
-}
+/* Topo */
+.topo { display:flex; align-items:center; justify-content:space-between; gap:1rem; min-height:54px; padding:.6rem 1rem; margin:0 0 1rem; border-radius:12px; background:linear-gradient(110deg,#173c70 0%,#176ca8 100%); color:#fff !important; box-shadow:0 3px 10px rgba(23,76,128,.08); }
+.topo * { color:#fff !important; }
+.topo-marca { display:flex; align-items:center; gap:.7rem; }
+.topo-icone { display:flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:10px; background:rgba(255,255,255,.15); font-size:1.15rem; }
+.marca { font-size:1.02rem; font-weight:800; }
+.submarca { margin-top:.1rem; font-size:.61rem; letter-spacing:.15em; font-weight:700; opacity:.85; }
+.topo-legenda { font-size:.78rem; font-weight:650; opacity:.95; }
+
+/* Metric cards with icon badges */
+.metric-card { display:flex; align-items:center; gap:.75rem; min-height:78px; padding:.7rem .85rem; border:1px solid #d4e4f6; border-radius:10px; background:linear-gradient(135deg,#fff 0%,#f7fbff 100%); box-sizing:border-box; }
+.metric-icon { display:flex; align-items:center; justify-content:center; width:38px; height:38px; flex:0 0 38px; border-radius:11px; }
+.metric-icon svg { width:23px; height:23px; display:block; }
+.metric-card.total .metric-icon { background:#ffe0bd; color:#f07816; }
+.metric-card.aberto .metric-icon { background:#e1efff; border:1px solid #78adff; color:#0876df; }
+.metric-card.andamento .metric-icon { background:#cceeff; color:#0797dc; }
+.metric-card.resolvido .metric-icon { background:#d6f3df; color:#168047; }
+.metric-copy { min-width:0; }
+.metric-label { color:#27577e; font-size:.78rem; font-weight:650; line-height:1.3; }
+.metric-value { color:#10233f; font-size:1.5rem; font-weight:750; line-height:1.25; margin-top:.12rem; }
+
+/* Ticket cards */
+[data-testid="stVerticalBlockBorderWrapper"] { border-radius:10px; border-color:#d7e5f5; background:#fff; }
+[data-testid="stVerticalBlockBorderWrapper"] > div { padding:.75rem; }
+.ticket-title { color:#10233f; font-size:1.02rem; font-weight:750; line-height:1.35; }
+.ticket-description { color:#607895; font-size:.82rem; line-height:1.45; margin:.2rem 0 .6rem; }
+.ticket-meta { display:flex; flex-wrap:wrap; align-items:center; gap:.55rem; color:#68809b; font-size:.75rem; margin:.2rem 0 .65rem; }
+.meta-divider { color:#c4d2e1; }
+.ticket-priority { font-size:.76rem; padding-top:.1rem; }
+.prioridade-alta { color:#c73535; font-weight:700; }
+.prioridade-media { color:#a36b00; font-weight:700; }
+.prioridade-baixa { color:#28734a; font-weight:700; }
+.priority-dot { display:inline-block; width:.48rem; height:.48rem; margin-right:.25rem; border-radius:50%; background:currentColor; }
+
+/* Form */
+[data-testid="stForm"] { border:0; padding:0; border-radius:0; background:transparent; }
+[data-testid="stTextInput"] input, [data-testid="stTextArea"] textarea { border-radius:8px; color:#243d5a; border:1px solid #dce7f5; background:#f0f5fb; }
+[data-testid="stWidgetLabel"] p { color:#36516f; font-size:.76rem; font-weight:650; }
+[data-testid="stFormSubmitButton"] button { min-height:39px; border:0; border-radius:8px; background:linear-gradient(100deg,#1169c8,#0876df); color:#fff; font-weight:750; }
+[data-testid="stFormSubmitButton"] button:hover { background:#0c61bb; color:#fff; }
+hr { border-color:#dce7f5; margin:.9rem 0; }
