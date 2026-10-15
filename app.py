@@ -448,14 +448,14 @@ st.markdown(
     }
 
     /* Sidebar uses only the native collapse/expand button. Disable all sidebar resize handles. */
-    section[data-testid="stSidebar"] {
+    [data-testid="stSidebar"] {
         resize: none !important;
         overflow-x: hidden !important;
         overflow-y: hidden !important;
         scrollbar-width: none !important;
     }
-    section[data-testid="stSidebar"]::before,
-    section[data-testid="stSidebar"]::after,
+    [data-testid="stSidebar"]::before,
+    [data-testid="stSidebar"]::after,
     [data-testid="stSidebarResizer"],
     [data-testid="stSidebarResizeHandle"],
     [data-testid="stSidebarResizerHandle"],
@@ -474,15 +474,15 @@ st.markdown(
     }
 
     /* Expanded state: place the genuine Streamlit collapse control in the red square at upper-right. */
-    section[data-testid="stSidebar"][aria-expanded="true"] [data-testid="stSidebarHeader"] {
+    [data-testid="stSidebar"][aria-expanded="true"] [data-testid="stSidebarHeader"] {
         position: relative !important;
         min-height: 48px !important;
         width: 100% !important;
         box-sizing: border-box !important;
     }
-    section[data-testid="stSidebar"][aria-expanded="true"] [data-testid="stSidebarHeader"] [data-testid="stSidebarCollapseButton"],
-    section[data-testid="stSidebar"][aria-expanded="true"] [data-testid="stSidebarHeader"] button[aria-label*="Collapse"],
-    section[data-testid="stSidebar"][aria-expanded="true"] [data-testid="stSidebarHeader"] button[aria-label*="Close sidebar"] {
+    [data-testid="stSidebar"][aria-expanded="true"] [data-testid="stSidebarHeader"] [data-testid="stSidebarCollapseButton"],
+    [data-testid="stSidebar"][aria-expanded="true"] [data-testid="stSidebarHeader"] button[aria-label*="Collapse"],
+    [data-testid="stSidebar"][aria-expanded="true"] [data-testid="stSidebarHeader"] button[aria-label*="Close sidebar"] {
         position: absolute !important;
         top: 8px !important;
         right: 8px !important;
@@ -492,7 +492,7 @@ st.markdown(
         margin: 0 !important;
         pointer-events: auto !important;
     }
-    section[data-testid="stSidebar"][aria-expanded="true"] [data-testid="stSidebarHeader"] button {
+    [data-testid="stSidebar"][aria-expanded="true"] [data-testid="stSidebarHeader"] button {
         min-width: 38px !important;
         width: 38px !important;
         max-width: 38px !important;
@@ -510,7 +510,7 @@ st.markdown(
         cursor: pointer !important;
         pointer-events: auto !important;
     }
-    section[data-testid="stSidebar"][aria-expanded="true"] [data-testid="stSidebarHeader"] button svg {
+    [data-testid="stSidebar"][aria-expanded="true"] [data-testid="stSidebarHeader"] button svg {
         width: 18px !important;
         height: 18px !important;
         color: #eef6ff !important;
@@ -569,6 +569,270 @@ st.markdown(
     .collapsed-rail-shell, .collapsed-rail-logo {
         pointer-events: none !important;
     }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+# Definitive layout fixes v10: restore the native navy sidebar and remove stale sizing.
+st.markdown(
+    r"""
+    <style>
+    /* Remove Streamlit top chrome and its reserved vertical offset. */
+    [data-testid="stHeader"],
+    [data-testid="stToolbar"],
+    [data-testid="stDecoration"],
+    [data-testid="stAppDeployButton"],
+    [data-testid="stMainMenu"] {
+        display: none !important;
+        height: 0 !important;
+        min-height: 0 !important;
+        max-height: 0 !important;
+    }
+    html, body, .stApp, [data-testid="stAppViewContainer"] {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+    [data-testid="stAppViewContainer"] > .main,
+    [data-testid="stMain"] {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+        top: 0 !important;
+    }
+    [data-testid="stMainBlockContainer"],
+    .main .block-container {
+        margin-top: 0 !important;
+        padding-top: .35rem !important;
+    }
+    div[data-testid="stElementContainer"]:has(.topo) {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+    body .stApp .topo {
+        margin-top: 0 !important;
+        transform: none !important;
+    }
+
+    /* Expanded sidebar: explicitly restore its intended 15.5rem width and dark brand styling.
+       Use data-testid without an element-name assumption; Streamlit versions render this as a div. */
+    html body .stApp [data-testid="stSidebar"] {
+        box-sizing: border-box !important;
+        width: 15.5rem !important;
+        min-width: 15.5rem !important;
+        max-width: 15.5rem !important;
+        flex: 0 0 15.5rem !important;
+        background: linear-gradient(180deg, #102b3a 0%, #173746 100%) !important;
+        border-right: 1px solid rgba(255,255,255,.06) !important;
+        resize: none !important;
+        overflow-x: hidden !important;
+        overflow-y: hidden !important;
+        scrollbar-width: none !important;
+        opacity: 1 !important;
+        filter: none !important;
+        visibility: visible !important;
+    }
+    html body .stApp [data-testid="stSidebar"] > div,
+    html body .stApp [data-testid="stSidebar"] [data-testid="stSidebarContent"],
+    html body .stApp [data-testid="stSidebar"] [data-testid="stSidebarUserContent"] {
+        box-sizing: border-box !important;
+        background: transparent !important;
+        opacity: 1 !important;
+        filter: none !important;
+        overflow-x: hidden !important;
+        overflow-y: hidden !important;
+        scrollbar-width: none !important;
+    }
+    html body .stApp [data-testid="stSidebar"] .sidebar-brand,
+    html body .stApp [data-testid="stSidebar"] .sidebar-section,
+    html body .stApp [data-testid="stSidebar"] .sidebar-nav-active,
+    html body .stApp [data-testid="stSidebar"] .sidebar-note {
+        opacity: 1 !important;
+        filter: none !important;
+    }
+    html body .stApp [data-testid="stSidebar"] .sidebar-icon {
+        color: #15394c !important;
+        background: #f1f7fb !important;
+    }
+
+    /* No sidebar resizing/drag handle; preserve resizing only for the ticket details window. */
+    [data-testid="stSidebar"],
+    [data-testid="stSidebar"] * {
+        resize: none !important;
+    }
+    [data-testid="stSidebarResizer"],
+    [data-testid="stSidebarResizeHandle"],
+    [data-testid="stSidebarResizerHandle"],
+    [data-testid="stSidebarResizeControl"],
+    [aria-label="Resize sidebar"],
+    [aria-label="Resize Sidebar"],
+    [aria-label="Resize side bar"],
+    [class*="stSidebarResizer"],
+    [class*="sidebar-resizer"],
+    [class*="SidebarResizeHandle"] {
+        display: none !important;
+        width: 0 !important;
+        min-width: 0 !important;
+        max-width: 0 !important;
+        pointer-events: none !important;
+    }
+
+    /* Native collapse button is functional; position it inside the sidebar. */
+    [data-testid="stSidebarHeader"] {
+        position: relative !important;
+        width: 100% !important;
+        min-height: 48px !important;
+        box-sizing: border-box !important;
+    }
+    [data-testid="stSidebarHeader"] [data-testid="stSidebarCollapseButton"],
+    [data-testid="stSidebarHeader"] button[aria-label*="Collapse"],
+    [data-testid="stSidebarHeader"] button[aria-label*="Close sidebar"] {
+        position: absolute !important;
+        top: 8px !important;
+        right: 8px !important;
+        left: auto !important;
+        bottom: auto !important;
+        z-index: 1000006 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 36px !important;
+        min-width: 36px !important;
+        max-width: 36px !important;
+        height: 36px !important;
+        min-height: 36px !important;
+        max-height: 36px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        background: rgba(255,255,255,.10) !important;
+        border: 1px solid rgba(255,255,255,.22) !important;
+        border-radius: 8px !important;
+        color: #eef6ff !important;
+        cursor: pointer !important;
+        pointer-events: auto !important;
+    }
+    [data-testid="stSidebarHeader"] button svg {
+        width: 18px !important;
+        height: 18px !important;
+        stroke: #eef6ff !important;
+        color: #eef6ff !important;
+        fill: none !important;
+    }
+
+    /* Collapsed state: 68px dark rail with just the native expand toggle and fallback headset icon. */
+    html body .stApp [data-testid="stSidebar"][aria-expanded="false"],
+    body:has([data-testid="stSidebarCollapsedControl"]) .stApp [data-testid="stSidebar"] {
+        position: fixed !important;
+        inset: 0 auto 0 0 !important;
+        width: 68px !important;
+        min-width: 68px !important;
+        max-width: 68px !important;
+        flex: 0 0 68px !important;
+        height: 100vh !important;
+        min-height: 100vh !important;
+        max-height: 100vh !important;
+        display: block !important;
+        transform: none !important;
+        translate: none !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        overflow: hidden !important;
+        background: linear-gradient(180deg, #102b3a 0%, #173746 100%) !important;
+        border-right: 1px solid rgba(255,255,255,.10) !important;
+        box-shadow: 2px 0 8px rgba(16,35,63,.08) !important;
+        z-index: 999990 !important;
+    }
+    html body .stApp [data-testid="stSidebar"][aria-expanded="false"] > div,
+    body:has([data-testid="stSidebarCollapsedControl"]) .stApp [data-testid="stSidebar"] > div,
+    html body .stApp [data-testid="stSidebar"][aria-expanded="false"] [data-testid="stSidebarContent"],
+    body:has([data-testid="stSidebarCollapsedControl"]) .stApp [data-testid="stSidebar"] [data-testid="stSidebarContent"],
+    html body .stApp [data-testid="stSidebar"][aria-expanded="false"] [data-testid="stSidebarUserContent"],
+    body:has([data-testid="stSidebarCollapsedControl"]) .stApp [data-testid="stSidebar"] [data-testid="stSidebarUserContent"] {
+        width: 68px !important;
+        min-width: 68px !important;
+        max-width: 68px !important;
+        padding: .25rem !important;
+        margin: 0 !important;
+        height: 100vh !important;
+        overflow: hidden !important;
+        background: transparent !important;
+        opacity: 1 !important;
+    }
+    html body .stApp [data-testid="stSidebar"][aria-expanded="false"] .sidebar-brand,
+    html body .stApp [data-testid="stSidebar"][aria-expanded="false"] .sidebar-section,
+    html body .stApp [data-testid="stSidebar"][aria-expanded="false"] .sidebar-nav-active,
+    html body .stApp [data-testid="stSidebar"][aria-expanded="false"] .sidebar-note,
+    body:has([data-testid="stSidebarCollapsedControl"]) .stApp [data-testid="stSidebar"] .sidebar-brand,
+    body:has([data-testid="stSidebarCollapsedControl"]) .stApp [data-testid="stSidebar"] .sidebar-section,
+    body:has([data-testid="stSidebarCollapsedControl"]) .stApp [data-testid="stSidebar"] .sidebar-nav-active,
+    body:has([data-testid="stSidebarCollapsedControl"]) .stApp [data-testid="stSidebar"] .sidebar-note {
+        display: none !important;
+    }
+    body:has([data-testid="stSidebarCollapsedControl"]) [data-testid="stMain"],
+    body:has([data-testid="stSidebar"][aria-expanded="false"]) [data-testid="stMain"] {
+        margin-left: 68px !important;
+        width: calc(100% - 68px) !important;
+        max-width: calc(100% - 68px) !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+        transition: margin-left .2s ease, width .2s ease, max-width .2s ease !important;
+    }
+    body:has([data-testid="stSidebarCollapsedControl"]) [data-testid="stMainBlockContainer"],
+    body:has([data-testid="stSidebar"][aria-expanded="false"]) [data-testid="stMainBlockContainer"] {
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: .35rem 1.2rem 1.2rem !important;
+        box-sizing: border-box !important;
+    }
+    body:has([data-testid="stSidebarCollapsedControl"]) .collapsed-rail-shell,
+    body:has([data-testid="stSidebar"][aria-expanded="false"]) .collapsed-rail-shell {
+        display: block !important;
+    }
+    body:has([data-testid="stSidebarCollapsedControl"]) .collapsed-rail-logo,
+    body:has([data-testid="stSidebar"][aria-expanded="false"]) .collapsed-rail-logo {
+        display: flex !important;
+    }
+    [data-testid="stSidebarCollapsedControl"],
+    [data-testid="stExpandSidebarButton"] {
+        position: fixed !important;
+        top: 10px !important;
+        left: 12px !important;
+        right: auto !important;
+        bottom: auto !important;
+        z-index: 1000008 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        pointer-events: auto !important;
+    }
+    [data-testid="stSidebarCollapsedControl"] button,
+    [data-testid="stExpandSidebarButton"] button {
+        width: 42px !important;
+        min-width: 42px !important;
+        max-width: 42px !important;
+        height: 38px !important;
+        min-height: 38px !important;
+        max-height: 38px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border-radius: 8px !important;
+        background: rgba(255,255,255,.10) !important;
+        border: 1px solid rgba(255,255,255,.22) !important;
+        color: #eef6ff !important;
+        pointer-events: auto !important;
+    }
+    [data-testid="stSidebarCollapsedControl"] button svg,
+    [data-testid="stExpandSidebarButton"] button svg {
+        width: 18px !important;
+        height: 18px !important;
+        stroke: #eef6ff !important;
+        color: #eef6ff !important;
+        fill: none !important;
+    }
+    .collapsed-rail-shell, .collapsed-rail-logo { pointer-events: none !important; }
     </style>
     """,
     unsafe_allow_html=True,
