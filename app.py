@@ -387,17 +387,32 @@ if st.session_state.chamado_detalhe_id is not None:
                 box-shadow: none !important;
                 flex: 0 0 34px !important;
             }
-            .st-key-modal_container .st-key-btn_min_modal button::before,
-            .st-key-modal_container .st-key-btn_max_modal button::before,
-            .st-key-modal_container .st-key-btn_close_modal button::before {
-                content: "" !important;
-                display: block !important;
-                width: 17px !important;
-                height: 17px !important;
-                background-repeat: no-repeat !important;
-                background-position: center !important;
-                background-size: contain !important;
-            }
+.st-key-modal_container .st-key-btn_min_modal button::before,
+.st-key-modal_container .st-key-btn_max_modal button::before,
+.st-key-modal_container .st-key-btn_close_modal button::before {
+    content: "" !important;
+    display: block !important;
+    width: 17px !important;
+    height: 17px !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    background-size: contain !important;
+    position: absolute !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    margin: 0 !important;
+}
+
+.st-key-modal_container .st-key-btn_min_modal button,
+.st-key-modal_container .st-key-btn_max_modal button,
+.st-key-modal_container .st-key-btn_close_modal button {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+}
             .st-key-modal_container .st-key-btn_min_modal button::before {
                 background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23173646' stroke-width='1.8' stroke-linecap='round'%3E%3Cpath d='M5 17h14'/%3E%3C/svg%3E") !important;
             }
