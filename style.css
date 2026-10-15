@@ -1,4 +1,4 @@
-/* Ponto de Apoio — Estilos corrigidos e alinhados */
+/* Ponto de Apoio — Estilos corrigidos e perfeitamente alinhados */
 :root { 
   --navy: #102b3a; 
   --blue: #1769b0; 
@@ -12,7 +12,6 @@
   color: var(--text); 
 }
 
-/* Espaçamento limpo e natural no topo */
 [data-testid="stMainBlockContainer"] { 
   max-width: 1680px; 
   padding: 1.2rem 1.2rem 1.2rem !important; 
@@ -72,7 +71,6 @@ p, [data-testid="stCaptionContainer"] { color: var(--muted); }
    ========================================================= */
 [data-testid="stHeader"] {
   background: transparent !important;
-  position: relative !important;
   z-index: 99999 !important;
 }
 
@@ -95,10 +93,10 @@ button[aria-label="Collapse sidebar"] svg {
   stroke: #eef6ff !important;
 }
 
-/* Botão de expandir (>>) posicionado de forma limpa e alinhada ao conteúdo */
+/* Botão de expandir (>>) alinhado milimetricamente à altura exata do card azul (.topo) */
 [data-testid="collapsedControl"] {
-  position: absolute !important;
-  top: 0.6rem !important;
+  position: fixed !important;
+  top: 3.85rem !important; 
   left: 1.2rem !important;
   background: #102b3a !important;
   border-radius: 8px !important;
