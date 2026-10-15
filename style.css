@@ -12,10 +12,10 @@
   color: var(--text); 
 }
 
-/* Espaçamento equilibrado no topo, sem sobras exageradas */
+/* Espaçamento limpo e natural no topo */
 [data-testid="stMainBlockContainer"] { 
   max-width: 1680px; 
-  padding: 1.5rem 1.2rem 1.2rem !important; 
+  padding: 1.2rem 1.2rem 1.2rem !important; 
 }
 
 h1 { color: #10233f; font-size: 1.9rem; font-weight: 800; letter-spacing: -.025em; margin: .2rem 0 .25rem; }
@@ -72,6 +72,7 @@ p, [data-testid="stCaptionContainer"] { color: var(--muted); }
    ========================================================= */
 [data-testid="stHeader"] {
   background: transparent !important;
+  position: relative !important;
   z-index: 99999 !important;
 }
 
@@ -94,11 +95,11 @@ button[aria-label="Collapse sidebar"] svg {
   stroke: #eef6ff !important;
 }
 
-/* Botão de expandir (>>) alinhado perfeitamente com o topo do painel azul */
+/* Botão de expandir (>>) posicionado de forma limpa e alinhada ao conteúdo */
 [data-testid="collapsedControl"] {
-  position: fixed !important;
-  top: 1.4rem !important;
-  left: 1rem !important;
+  position: absolute !important;
+  top: 0.6rem !important;
+  left: 1.2rem !important;
   background: #102b3a !important;
   border-radius: 8px !important;
   padding: 6px !important;
