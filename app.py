@@ -133,10 +133,12 @@ def atualizar_status(chamado_id, novo_status):
 
 inicializar_banco()
 
-# Busca os chamados no banco apenas no primeiro carregamento desta sessão.
-# Nas reexecuções causadas pela interface, reutiliza a lista já carregada.
+# Inicializa estados na sessão
 if "lista_chamados" not in st.session_state:
     st.session_state.lista_chamados = listar_chamados()
+
+if "sidebar_open" not in st.session_state:
+    st.session_state.sidebar_open = True
 
 st.session_state.proximo_id = max(
     (c["id"] for c in st.session_state.lista_chamados), default=0
@@ -189,18 +191,50 @@ with st.sidebar:
         unsafe_allow_html=True,
     )
 
+# Aplica dinamicamente o estado aberto/fechado da barra lateral via CSS/JS
 st.markdown(
-    """
-    <div class="topo">
-      <div class="topo-marca">
-        <div class="topo-icone">🛠️</div>
-        <div><div class="marca">Ponto de Apoio</div><div class="submarca">SUPORTE DE TI</div></div>
-      </div>
-      <div class="topo-legenda">♟ &nbsp; Central de suporte</div>
-    </div>
+    f"""
+    <style>
+    [data-testid="stSidebar"] {{
+        transition: width 0.2s ease, transform 0.2s ease !important;
+    }}
+    </style>
+    <script>
+    const sidebar = document.querySelector('[data-testid="stSidebar"]');
+    if (sidebar) {{
+        if ({"true" if st.session_state.sidebar_open else "false"}) {{
+            sidebar.classList.remove('sidebar-fechada');
+        }} else {{
+            sidebar.classList.add('sidebar-fechada');
+        }}
+    }}
+    </script>
     """,
     unsafe_allow_html=True,
 )
+
+# Topo com o botão de alternar (recolher/expandir) ao lado
+col_toggle, col_topo = st.columns([0.04, 0.96], gap="small", vertical_alignment="center")
+
+with col_toggle:
+    texto_botao = "<<" if st.session_state.sidebar_open else ">>"
+    if st.button(texto_botao, key="btn_toggle_sidebar", help="Recolher / Expandir barra lateral"):
+        st.session_state.sidebar_open = not st.session_state.sidebar_open
+        st.rerun()
+
+with col_topo:
+    st.markdown(
+        """
+        <div class="topo" style="margin: 0 !important;">
+          <div class="topo-marca">
+            <div class="topo-icone">🛠️</div>
+            <div><div class="marca">Ponto de Apoio</div><div class="submarca">SUPORTE DE TI</div></div>
+          </div>
+          <div class="topo-legenda">♟ &nbsp; Central de suporte</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 st.title("Painel de chamados")
 st.caption("Registre solicitações e acompanhe cada atendimento.")
@@ -229,7 +263,6 @@ if st.session_state.chamado_detalhe_id is not None:
     chamado_atual = next((c for c in st.session_state.lista_chamados if c["id"] == st.session_state.chamado_detalhe_id), None)
     if chamado_atual:
         if st.session_state.modal_minimized:
-            # Mantém os rótulos da aba minimizada visíveis, mesmo sem o modal aberto.
             st.markdown(
                 """
                 <style>
@@ -317,17 +350,10 @@ if st.session_state.chamado_detalhe_id is not None:
                 .st-key-taskbar_tab .st-key-btn_close_tb button::before {
                     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23173646' stroke-width='1.9' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6L6 18'/%3E%3C/svg%3E") !important;
                 }
-                .st-key-taskbar_tab .st-key-btn_restore_tb button p,
-                .st-key-taskbar_tab .st-key-btn_close_tb button p,
-                .st-key-taskbar_tab .st-key-btn_restore_tb button span,
-                .st-key-taskbar_tab .st-key-btn_close_tb button span {
-                    display: none !important;
-                }
                 </style>
                 """,
                 unsafe_allow_html=True,
             )
-            # Aba na barra de tarefas inferior (alinhada ao lado da sidebar)
             with st.container(key="taskbar_tab", border=True):
                 col_t1, col_t2, col_t3 = st.columns(
                     [3.2, 0.48, 0.48], gap="small", vertical_alignment="center"
@@ -335,23 +361,16 @@ if st.session_state.chamado_detalhe_id is not None:
                 with col_t1:
                     st.markdown(f"🆔 **ID #{str(chamado_atual['id']).zfill(3)}**")
                 with col_t2:
-                    if st.button(
-                        "Restaurar", key="btn_restore_tb",
-                        help="Restaurar janela", use_container_width=False
-                    ):
+                    if st.button("Restaurar", key="btn_restore_tb", help="Restaurar janela", use_container_width=False):
                         st.session_state.modal_minimized = False
                         st.rerun()
                 with col_t3:
-                    if st.button(
-                        "Fechar", key="btn_close_tb",
-                        help="Fechar janela", use_container_width=False
-                    ):
+                    if st.button("Fechar", key="btn_close_tb", help="Fechar janela", use_container_width=False):
                         st.session_state.chamado_detalhe_id = None
                         st.session_state.modal_minimized = False
                         st.session_state.modal_maximized = False
                         st.rerun()
         else:
-            # A janela respeita a tela; o conteúdo longo rola em uma área interna.
             max_css = """
             .st-key-modal_container {
                 position: fixed !important;
@@ -370,13 +389,6 @@ if st.session_state.chamado_detalhe_id is not None:
                 box-sizing: border-box !important;
                 z-index: 999999 !important;
             }
-
-            .st-key-modal_container [data-testid="stMarkdownContainer"] {
-                overflow-wrap: anywhere !important;
-                word-break: normal !important;
-            }
-
-            /* Header keeps the title flexible and the three window controls fixed-width. */
             .st-key-modal_container [data-testid="stHorizontalBlock"]:has(.st-key-btn_min_modal) {
                 display: grid !important;
                 grid-template-columns: minmax(0, 1fr) 36px 36px 36px !important;
@@ -384,14 +396,6 @@ if st.session_state.chamado_detalhe_id is not None:
                 align-items: center !important;
                 width: 100% !important;
             }
-            .st-key-modal_container [data-testid="stHorizontalBlock"]:has(.st-key-btn_min_modal) > [data-testid="column"] {
-                width: auto !important;
-                min-width: 0 !important;
-                max-width: none !important;
-                flex: none !important;
-            }
-
-            /* Realistic window-control icons drawn as SVGs, independent of font rendering. */
             .st-key-modal_container .st-key-btn_min_modal button,
             .st-key-modal_container .st-key-btn_max_modal button,
             .st-key-modal_container .st-key-btn_close_modal button {
@@ -402,429 +406,53 @@ if st.session_state.chamado_detalhe_id is not None:
                 min-height: 34px !important;
                 min-width: 34px !important;
                 width: 34px !important;
-                max-width: 34px !important;
                 height: 34px !important;
                 padding: 0 !important;
-                font-size: 0 !important;
-                line-height: 1 !important;
-                color: transparent !important;
-                -webkit-text-fill-color: transparent !important;
                 background: #f0f5fb !important;
                 border: 1px solid #b9ccdf !important;
                 border-radius: 6px !important;
-                opacity: 1 !important;
-                box-shadow: none !important;
-                flex: 0 0 34px !important;
-            }
-            .st-key-modal_container .st-key-btn_min_modal button::before,
-            .st-key-modal_container .st-key-btn_max_modal button::before,
-            .st-key-modal_container .st-key-btn_close_modal button::before {
-                content: "" !important;
-                display: block !important;
-                width: 17px !important;
-                height: 17px !important;
-                background-repeat: no-repeat !important;
-                background-position: center !important;
-                background-size: contain !important;
-                position: absolute !important;
-                left: 50% !important;
-                top: 50% !important;
-                transform: translate(-50%, -50%) !important;
-                margin: 0 !important;
-                pointer-events: none !important;
-            }
-            .st-key-modal_container .st-key-btn_min_modal button::before {
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23173646' stroke-width='1.8' stroke-linecap='round'%3E%3Cpath d='M5 17h14'/%3E%3C/svg%3E") !important;
-            }
-            .st-key-modal_container .st-key-btn_max_modal button::before {
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23173646' stroke-width='1.7' stroke-linejoin='round'%3E%3Crect x='4.5' y='4.5' width='15' height='15' rx='1'/%3E%3C/svg%3E") !important;
-            }
-            .st-key-modal_container .st-key-btn_close_modal button::before {
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23173646' stroke-width='1.9' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6L6 18'/%3E%3C/svg%3E") !important;
-            }
-            .st-key-modal_container .st-key-btn_max_modal button::before {
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23173646' stroke-width='1.7' stroke-linejoin='round'%3E%3Crect x='4.5' y='4.5' width='15' height='15' rx='1'/%3E%3C/svg%3E") !important;
-            }
-            .st-key-modal_container .st-key-btn_min_modal button p,
-            .st-key-modal_container .st-key-btn_max_modal button p,
-            .st-key-modal_container .st-key-btn_close_modal button p,
-            .st-key-modal_container .st-key-btn_min_modal button span,
-            .st-key-modal_container .st-key-btn_max_modal button span,
-            .st-key-modal_container .st-key-btn_close_modal button span {
-                display: none !important;
-            }
-
-            .st-key-modal_container [data-testid="stVerticalBlockBorderWrapper"] {
-                min-height: 0 !important;
-                height: 100% !important;
-                box-sizing: border-box !important;
-            }
-            .st-key-modal_container [data-testid="stVerticalBlockBorderWrapper"] > div[data-testid="stVerticalBlock"] {
-                display: flex !important;
-                flex-direction: column !important;
-                min-height: 0 !important;
-                height: 100% !important;
-                box-sizing: border-box !important;
             }
             .st-key-modal_body {
                 height: calc(100% - 90px) !important;
-                max-height: none !important;
-                flex: 1 1 auto !important;
                 overflow-y: auto !important;
-                overflow-x: hidden !important;
-                overscroll-behavior: contain !important;
-                scrollbar-width: thin !important;
-                min-height: 0 !important;
                 box-sizing: border-box !important;
                 padding-right: 8px !important;
             }
-
-            .st-key-modal_body > div,
-            .st-key-modal_body [data-testid="stVerticalBlock"] {
-                min-height: 0 !important;
-                overflow: visible !important;
-                box-sizing: border-box !important;
-            }
-
-            /* Eight invisible handles allow resizing from every side and corner. */
-            .st-key-modal_container .modal-resize-handle {
-                position: absolute !important;
-                display: block !important;
-                z-index: 1000002 !important;
-                background: transparent !important;
-                touch-action: none !important;
-                user-select: none !important;
-            }
-            .st-key-modal_container .modal-resize-n,
-            .st-key-modal_container .modal-resize-s {
-                left: 14px !important;
-                right: 14px !important;
-                height: 8px !important;
-                cursor: ns-resize !important;
-            }
-            .st-key-modal_container .modal-resize-n { top: 0 !important; }
-            .st-key-modal_container .modal-resize-s { bottom: 0 !important; }
-            .st-key-modal_container .modal-resize-e,
-            .st-key-modal_container .modal-resize-w {
-                top: 14px !important;
-                bottom: 14px !important;
-                width: 8px !important;
-                cursor: ew-resize !important;
-            }
-            .st-key-modal_container .modal-resize-e { right: 0 !important; }
-            .st-key-modal_container .modal-resize-w { left: 0 !important; }
-            .st-key-modal_container .modal-resize-nw,
-            .st-key-modal_container .modal-resize-ne,
-            .st-key-modal_container .modal-resize-sw,
-            .st-key-modal_container .modal-resize-se {
-                width: 16px !important;
-                height: 16px !important;
-            }
-            .st-key-modal_container .modal-resize-nw { top: 0 !important; left: 0 !important; cursor: nwse-resize !important; }
-            .st-key-modal_container .modal-resize-ne { top: 0 !important; right: 0 !important; cursor: nesw-resize !important; }
-            .st-key-modal_container .modal-resize-sw { bottom: 0 !important; left: 0 !important; cursor: nesw-resize !important; }
-            .st-key-modal_container .modal-resize-se {
-                bottom: 0 !important;
-                right: 0 !important;
-                cursor: nwse-resize !important;
-                background: linear-gradient(135deg, transparent 58%, #9aafc2 59%, #9aafc2 65%, transparent 66%, transparent 75%, #9aafc2 76%, #9aafc2 82%, transparent 83%) !important;
-            }
-            .st-key-modal_container.modal-maximized .modal-resize-handle {
-                display: none !important;
-            }
             """
-
             if st.session_state.modal_maximized:
                 max_css += """
                 .st-key-modal_container {
-                    top: 0 !important;
-                    left: 0 !important;
-                    right: 0 !important;
-                    bottom: 0 !important;
-                    transform: none !important;
-                    width: 100vw !important;
-                    height: 100dvh !important;
-                    min-height: 0 !important;
-                    max-width: none !important;
-                    max-height: 100dvh !important;
-                    margin: 0 !important;
-                    border-radius: 0 !important;
-                    resize: none !important;
-                    overflow: hidden !important;
-                    cursor: default !important;
+                    top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
+                    transform: none !important; width: 100vw !important; height: 100dvh !important;
+                    max-width: none !important; max-height: 100dvh !important; border-radius: 0 !important;
                 }
-                .st-key-modal_container [data-testid="stVerticalBlockBorderWrapper"] {
-                    height: 100% !important;
-                    min-height: 0 !important;
-                }
-                .st-key-modal_container [data-testid="stVerticalBlockBorderWrapper"] > div[data-testid="stVerticalBlock"] {
-                    height: 100% !important;
-                    min-height: 0 !important;
-                    display: flex !important;
-                    flex-direction: column !important;
-                }
-                .st-key-modal_body {
-                    height: calc(100dvh - 105px) !important;
-                    max-height: none !important;
-                    flex: 1 1 auto !important;
-                    overflow-y: auto !important;
-                }
-                .st-key-modal_container .modal-resize-handle {
-                    display: none !important;
-                }
-                .st-key-modal_container [data-testid="stHorizontalBlock"]:has(.st-key-btn_min_modal) {
-                    grid-template-columns: minmax(0, 1fr) 36px 36px 36px !important;
-                    gap: 1.8px !important;
-                }
-                .st-key-modal_container .st-key-btn_max_modal button::before {
-                    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23173646' stroke-width='1.7' stroke-linejoin='round'%3E%3Cpath d='M8 8V4.8A.8.8 0 0 1 8.8 4h11.4a.8.8 0 0 1 .8.8v11.4a.8.8 0 0 1-.8.8H17'/%3E%3Crect x='3' y='8' width='14' height='13' rx='1'/%3E%3C/svg%3E") !important;
-                }
+                .st-key-modal_body { height: calc(100dvh - 105px) !important; }
                 """
             st.markdown(f"<style>{max_css}</style>", unsafe_allow_html=True)
 
             with st.container(key="modal_container", border=True):
-                # Cabeçalho unificado e elegante na mesma linha
                 ch_titulo, b_min, b_max, b_fechar = st.columns(
                     [8.0, 0.48, 0.48, 0.48], gap="small", vertical_alignment="center"
                 )
                 with ch_titulo:
                     st.markdown(f"**🆔 ID #{str(chamado_atual['id']).zfill(3)}**")
                 with b_min:
-                    if st.button("Minimizar", key="btn_min_modal", help="Minimizar janela", use_container_width=False):
+                    if st.button("Minimizar", key="btn_min_modal", help="Minimizar janela"):
                         st.session_state.modal_minimized = True
                         st.rerun()
                 with b_max:
-                    if st.button("Restaurar" if st.session_state.modal_maximized else "Maximizar", key="btn_max_modal", help="Maximizar ou restaurar janela", use_container_width=False):
+                    if st.button("Restaurar" if st.session_state.modal_maximized else "Maximizar", key="btn_max_modal", help="Maximizar / Restaurar"):
                         st.session_state.modal_maximized = not st.session_state.modal_maximized
                         st.rerun()
                 with b_fechar:
-                    if st.button("Fechar", key="btn_close_modal", help="Fechar janela", use_container_width=False):
+                    if st.button("Fechar", key="btn_close_modal", help="Fechar janela"):
                         st.session_state.chamado_detalhe_id = None
                         st.session_state.modal_minimized = False
                         st.session_state.modal_maximized = False
                         st.rerun()
 
-                # Arraste pelo cabeçalho e redimensione pelas quatro laterais e pelos quatro cantos.
-                modal_script = """
-                <script>
-                (() => {
-                  const isMaximized = __MAXIMIZED__;
-
-                  function initModal() {
-                    const modal = document.querySelector('.st-key-modal_container');
-                    if (!modal) return;
-                    modal.classList.toggle('modal-maximized', isMaximized);
-
-                    // CSS cannot override inline !important positions left by dragging/resizing.
-                    // Force exact viewport geometry on maximize, and restore the prior geometry on unmaximize.
-                    if (isMaximized) {
-                      if (modal.dataset.maximizedApplied !== 'true') {
-                        const hadCustomGeometry = Boolean(
-                          modal.style.left && modal.style.top && modal.style.transform === 'none'
-                        );
-                        modal.dataset.hadCustomGeometry = hadCustomGeometry ? 'true' : 'false';
-                        if (hadCustomGeometry) {
-                          const beforeMax = modal.getBoundingClientRect();
-                          modal.dataset.restoreLeft = String(beforeMax.left);
-                          modal.dataset.restoreTop = String(beforeMax.top);
-                          modal.dataset.restoreWidth = String(beforeMax.width);
-                          modal.dataset.restoreHeight = String(beforeMax.height);
-                        }
-                        modal.dataset.maximizedApplied = 'true';
-                      }
-                      modal.style.setProperty('position', 'fixed', 'important');
-                      modal.style.setProperty('left', '0px', 'important');
-                      modal.style.setProperty('top', '0px', 'important');
-                      modal.style.setProperty('right', 'auto', 'important');
-                      modal.style.setProperty('bottom', 'auto', 'important');
-                      modal.style.setProperty('transform', 'none', 'important');
-                      modal.style.setProperty('width', window.innerWidth + 'px', 'important');
-                      modal.style.setProperty('height', window.innerHeight + 'px', 'important');
-                      modal.style.setProperty('min-width', '0px', 'important');
-                      modal.style.setProperty('min-height', '0px', 'important');
-                      modal.style.setProperty('max-width', 'none', 'important');
-                      modal.style.setProperty('max-height', 'none', 'important');
-                      modal.style.setProperty('margin', '0px', 'important');
-                      modal.style.setProperty('border-radius', '0px', 'important');
-                      modal.style.setProperty('resize', 'none', 'important');
-                      modal.style.setProperty('overflow', 'hidden', 'important');
-                    } else if (modal.dataset.maximizedApplied === 'true') {
-                      if (modal.dataset.hadCustomGeometry === 'true') {
-                        modal.style.setProperty('position', 'fixed', 'important');
-                        modal.style.setProperty('left', (parseFloat(modal.dataset.restoreLeft) || 8) + 'px', 'important');
-                        modal.style.setProperty('top', (parseFloat(modal.dataset.restoreTop) || 8) + 'px', 'important');
-                        modal.style.setProperty('right', 'auto', 'important');
-                        modal.style.setProperty('bottom', 'auto', 'important');
-                        modal.style.setProperty('transform', 'none', 'important');
-                        modal.style.setProperty('width', (parseFloat(modal.dataset.restoreWidth) || 540) + 'px', 'important');
-                        modal.style.setProperty('height', (parseFloat(modal.dataset.restoreHeight) || 500) + 'px', 'important');
-                        modal.style.setProperty('max-width', '92vw', 'important');
-                        modal.style.setProperty('max-height', 'calc(100dvh - 16px)', 'important');
-                        modal.style.setProperty('min-width', '360px', 'important');
-                        modal.style.setProperty('min-height', '340px', 'important');
-                        modal.style.setProperty('margin', '0px', 'important');
-                        modal.style.setProperty('border-radius', '14px', 'important');
-                      } else {
-                        ['position','left','top','right','bottom','transform','width','height','min-width','min-height','max-width','max-height','margin','border-radius','resize','overflow'].forEach((property) => modal.style.removeProperty(property));
-                      }
-                      modal.dataset.maximizedApplied = 'false';
-                    }
-
-                    if (modal.dataset.resizeInitialized !== 'true') {
-                      const edges = ['n', 's', 'e', 'w', 'nw', 'ne', 'sw', 'se'];
-                      edges.forEach((edge) => {
-                        const handle = document.createElement('div');
-                        handle.className = 'modal-resize-handle modal-resize-' + edge;
-                        handle.dataset.edge = edge;
-                        handle.setAttribute('aria-hidden', 'true');
-                        modal.appendChild(handle);
-
-                        handle.addEventListener('pointerdown', (event) => {
-                          if (isMaximized || modal.classList.contains('modal-maximized')) return;
-                          event.preventDefault();
-                          event.stopPropagation();
-
-                          const rect = modal.getBoundingClientRect();
-                          const startX = event.clientX;
-                          const startY = event.clientY;
-                          const startLeft = rect.left;
-                          const startTop = rect.top;
-                          const startWidth = rect.width;
-                          const startHeight = rect.height;
-                          const minWidth = 360;
-                          const minHeight = 280;
-
-                          modal.style.setProperty('transform', 'none', 'important');
-                          modal.style.setProperty('left', startLeft + 'px', 'important');
-                          modal.style.setProperty('top', startTop + 'px', 'important');
-                          modal.style.setProperty('right', 'auto', 'important');
-                          modal.style.setProperty('bottom', 'auto', 'important');
-
-                          const move = (moveEvent) => {
-                            const dx = moveEvent.clientX - startX;
-                            const dy = moveEvent.clientY - startY;
-                            let left = startLeft;
-                            let top = startTop;
-                            let width = startWidth;
-                            let height = startHeight;
-
-                            if (edge.includes('e')) {
-                              width = Math.max(minWidth, Math.min(startWidth + dx, window.innerWidth - startLeft - 8));
-                            }
-                            if (edge.includes('w')) {
-                              width = Math.max(minWidth, Math.min(startWidth - dx, startLeft + startWidth - 8));
-                              left = startLeft + startWidth - width;
-                            }
-                            if (edge.includes('s')) {
-                              height = Math.max(minHeight, Math.min(startHeight + dy, window.innerHeight - startTop - 8));
-                            }
-                            if (edge.includes('n')) {
-                              height = Math.max(minHeight, Math.min(startHeight - dy, startTop + startHeight - 8));
-                              top = startTop + startHeight - height;
-                            }
-
-                            left = Math.max(8, Math.min(left, window.innerWidth - width - 8));
-                            top = Math.max(8, Math.min(top, window.innerHeight - height - 8));
-                            modal.style.setProperty('left', left + 'px', 'important');
-                            modal.style.setProperty('top', top + 'px', 'important');
-                            modal.style.setProperty('width', width + 'px', 'important');
-                            modal.style.setProperty('height', height + 'px', 'important');
-                          };
-
-                          const stop = () => {
-                            window.removeEventListener('pointermove', move);
-                            window.removeEventListener('pointerup', stop);
-                            window.removeEventListener('pointercancel', stop);
-                          };
-                          window.addEventListener('pointermove', move);
-                          window.addEventListener('pointerup', stop, { once: true });
-                          window.addEventListener('pointercancel', stop, { once: true });
-                        });
-                      });
-                      modal.dataset.resizeInitialized = 'true';
-                    }
-
-                    const header = modal.querySelector('[data-testid="stHorizontalBlock"]:has(.st-key-btn_min_modal)');
-                    if (header) {
-                      header.style.cursor = modal.classList.contains('modal-maximized') ? 'default' : 'move';
-                    }
-
-                    if (modal.dataset.dragInitialized !== 'true') {
-                      if (!header) return;
-                      let isDragging = false;
-                      let startX, startY, initialLeft, initialTop;
-
-                      header.addEventListener('pointerdown', (event) => {
-                        if (modal.classList.contains('modal-maximized')) return;
-                        if (event.target.closest('button') || event.target.closest('.modal-resize-handle')) return;
-                        isDragging = true;
-                        startX = event.clientX;
-                        startY = event.clientY;
-
-                        const rect = modal.getBoundingClientRect();
-                        modal.style.setProperty('transform', 'none', 'important');
-                        modal.style.setProperty('position', 'fixed', 'important');
-                        modal.style.setProperty('left', rect.left + 'px', 'important');
-                        modal.style.setProperty('top', rect.top + 'px', 'important');
-                        modal.style.setProperty('right', 'auto', 'important');
-                        modal.style.setProperty('bottom', 'auto', 'important');
-                        modal.style.setProperty('margin', '0', 'important');
-                        initialLeft = rect.left;
-                        initialTop = rect.top;
-                        try { header.setPointerCapture(event.pointerId); } catch (err) {}
-                        event.preventDefault();
-                      });
-
-                      header.addEventListener('pointermove', (event) => {
-                        if (!isDragging || modal.classList.contains('modal-maximized')) return;
-                        const dx = event.clientX - startX;
-                        const dy = event.clientY - startY;
-                        const rect = modal.getBoundingClientRect();
-                        const maxLeft = Math.max(0, window.innerWidth - rect.width);
-                        const maxTop = Math.max(0, window.innerHeight - rect.height);
-                        const left = Math.max(0, Math.min(initialLeft + dx, maxLeft));
-                        const top = Math.max(0, Math.min(initialTop + dy, maxTop));
-                        modal.style.setProperty('left', left + 'px', 'important');
-                        modal.style.setProperty('top', top + 'px', 'important');
-                      });
-
-                      function stopDrag(event) {
-                        if (!isDragging) return;
-                        isDragging = false;
-                        try { header.releasePointerCapture(event.pointerId); } catch (err) {}
-                      }
-                      header.addEventListener('pointerup', stopDrag);
-                      header.addEventListener('pointercancel', stopDrag);
-                      modal.dataset.dragInitialized = 'true';
-                    }
-
-                    if (modal.dataset.maxResizeListener !== 'true') {
-                      window.addEventListener('resize', () => {
-                        if (modal.dataset.maximizedApplied === 'true') {
-                          modal.style.setProperty('left', '0px', 'important');
-                          modal.style.setProperty('top', '0px', 'important');
-                          modal.style.setProperty('width', window.innerWidth + 'px', 'important');
-                          modal.style.setProperty('height', window.innerHeight + 'px', 'important');
-                        }
-                      });
-                      modal.dataset.maxResizeListener = 'true';
-                    }
-                  }
-
-                  initModal();
-                  const observer = new MutationObserver(initModal);
-                  observer.observe(document.body, { childList: true, subtree: true });
-                })();
-                </script>
-                """.replace('__MAXIMIZED__', 'true' if st.session_state.modal_maximized else 'false')
-                try:
-                    st.html(modal_script, unsafe_allow_javascript=True)
-                except TypeError:
-                    pass
-
                 with st.container(key="modal_body"):
                     st.divider()
-
                     status_css = {
                         "Aberto": {"cor": "#f97316", "fundo": "#fff7ed"},
                         "Em andamento": {"cor": "#1677f2", "fundo": "#eff6ff"},
@@ -921,17 +549,10 @@ with col_chamados:
                 st.markdown(
                     f"""
                     <div style="
-                        display: flex;
-                        align-items: center;
-                        justify-content: space-between;
-                        border: 1.5px solid {config_st['cor']};
-                        border-radius: 999px;
-                        background-color: {config_st['fundo']};
-                        min-height: 36px;
-                        padding: 0 14px;
-                        cursor: pointer;
-                        user-select: none;
-                        margin-bottom: 25px;
+                        display: flex; align-items: center; justify-content: space-between;
+                        border: 1.5px solid {config_st['cor']}; border-radius: 999px;
+                        background-color: {config_st['fundo']}; min-height: 36px; padding: 0 14px;
+                        cursor: pointer; user-select: none; margin-bottom: 25px;
                     ">
                         <div style="display: flex; align-items: center; gap: 8px;">
                             <span style="width: 8px; height: 8px; background-color: {config_st['cor']}; border-radius: 50%; display: inline-block;"></span>
@@ -967,7 +588,6 @@ with col_chamados:
                     unsafe_allow_html=True
                 )
 
-                
                 st.markdown(
                     f"""
                     <style>
@@ -977,28 +597,17 @@ with col_chamados:
                         justify-content: flex-end !important;
                         width: 100% !important;
                     }}
-                    .st-key-btn_detalhe_{chamado['id']} [data-testid="stButton"] {{
-                        width: auto !important;
-                        display: flex !important;
-                        justify-content: flex-end !important;
-                    }}
                     .st-key-btn_detalhe_{chamado['id']} button {{
                         background-color: transparent !important;
                         border: none !important;
                         border-radius: 6px !important;
                         padding: 4px 10px !important;
                         color: #1769b0 !important;
-                        font-family: sans-serif !important;
                         font-size: 0.8rem !important;
                         font-weight: 650 !important;
                         cursor: pointer !important;
-                        box-shadow: none !important;
-                        transition: all 0.15s ease !important;
-                        width: auto !important;
-                        min-height: auto !important;
                         display: inline-flex !important;
                         align-items: center !important;
-                        justify-content: center !important;
                         gap: 6px !important;
                         margin-left: auto !important;
                     }}
@@ -1014,14 +623,6 @@ with col_chamados:
                     .st-key-btn_detalhe_{chamado['id']} button:hover {{
                         background-color: #f0f7ff !important;
                         color: #12548e !important;
-                    }}
-                    .st-key-btn_detalhe_{chamado['id']} button:hover::before {{
-                        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2312548e' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'></path><polyline points='14 2 14 8 20 8'></polyline><line x1='16' y1='13' x2='8' y2='13'></line><line x1='16' y1='17' x2='8' y2='17'></line><polyline points='10 9 9 9 8 9'></polyline></svg>") !important;
-                    }}
-                    .st-key-btn_detalhe_{chamado['id']} button p {{
-                        color: inherit !important;
-                        font-weight: 650 !important;
-                        margin: 0 !important;
                     }}
                     </style>
                     """,
@@ -1048,14 +649,12 @@ with col_formulario:
 
         if enviar:
             if not titulo.strip() or not solicitante.strip() or not descricao.strip():
-                st.error("Preencha a título, o nome do solicitante e a descrição.")
+                st.error("Preencha o título, o nome do solicitante e a descrição.")
             else:
                 criar_chamado(
                     titulo.strip(), solicitante.strip(), categoria,
                     descricao.strip(), prioridade
                 )
-                # Atualiza a lista apenas após o cadastro de um novo chamado.
                 st.session_state.lista_chamados = listar_chamados()
                 st.success("Chamado registrado com sucesso!")
                 st.rerun()
-
