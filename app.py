@@ -161,8 +161,15 @@ def atualizar_status(chamado_id, novo_status):
 
 inicio_execucao_app = perf_counter()
 inicializar_banco()
-st.session_state.lista_chamados = listar_chamados()
-st.session_state.proximo_id = max((c["id"] for c in st.session_state.lista_chamados), default=0) + 1
+
+# Busca os chamados no banco apenas no primeiro carregamento desta sessão.
+# Nas reexecuções causadas pela interface, reutiliza a lista já carregada.
+if "lista_chamados" not in st.session_state:
+    st.session_state.lista_chamados = listar_chamados()
+
+st.session_state.proximo_id = max(
+    (c["id"] for c in st.session_state.lista_chamados), default=0
+) + 1
 
 if "chamado_detalhe_id" not in st.session_state:
     st.session_state.chamado_detalhe_id = None
@@ -181,10 +188,14 @@ def contar_status(status):
     return sum(c["status"] == status for c in st.session_state.lista_chamados)
 
 def salvar_status(chamado_id):
-    """Salva o status no callback, antes da página ser renderizada novamente."""
+    """Salva no banco e atualiza o chamado na lista da sessão."""
     novo_status = st.session_state.get(f"select_acao_{chamado_id}")
     if novo_status in STATUS:
         atualizar_status(chamado_id, novo_status)
+        for chamado in st.session_state.lista_chamados:
+            if chamado["id"] == chamado_id:
+                chamado["status"] = novo_status
+                break
 
 
 css_path = Path(__file__).with_name("style.css")
@@ -590,6 +601,8 @@ with col_formulario:
                     titulo.strip(), solicitante.strip(), categoria,
                     descricao.strip(), prioridade
                 )
+                # Atualiza a lista apenas após o cadastro de um novo chamado.
+                st.session_state.lista_chamados = listar_chamados()
                 st.success("Chamado registrado com sucesso!")
                 st.rerun()
 
