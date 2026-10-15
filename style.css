@@ -490,3 +490,24 @@ div[data-testid="stSidebarResizer"],
 [data-testid="stSidebar"] > div::-webkit-scrollbar {
     display: none; /* Oculta a barra de rolagem no Chrome, Safari e Edge */
 }
+
+[data-testid="stSidebarResizer"],
+.stSidebarResizer,
+div[class*="stSidebarResizer"],
+[aria-label="Resize sidebar"],
+button[aria-label*="Resize sidebar"] {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    cursor: default !important;
+}
+
+[data-testid="stSidebar"] {
+    cursor: default !important;
+}
+[data-testid="stSidebar"] * {
+    cursor: default !important;
+}
